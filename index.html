@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unknown Novel</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header>
+  <h1>Unknown Novel</h1>
+  <p>Stories Without Names</p>
+</header>
+
+<main id="novel-list"></main>
+
+<footer>
+  <p>© 2026 Unknown Novel</p>
+</footer>
+
+<script src="assets/js/data.js"></script>
+<script>
+const list = document.getElementById("novel-list");
+
+novels.forEach(novel => {
+  list.innerHTML += `
+    <div class="card">
+      <img src="${novel.cover}">
+      <h2>${novel.title}</h2>
+      <p>${novel.genre}</p>
+      <a href="novel.html?id=${novel.id}">Baca</a>
+    </div>
+  `;
+});
+</script>
+
+</body>
+</html>

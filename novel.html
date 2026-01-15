@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Novel</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div id="novel"></div>
+
+<script src="assets/js/data.js"></script>
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+const novel = novels.find(n => n.id === id);
+
+document.getElementById("novel").innerHTML = `
+  <img src="${novel.cover}" class="cover">
+  <h1>${novel.title}</h1>
+  <p class="author">${novel.author}</p>
+  <p>${novel.description}</p>
+
+  <h3>Chapter</h3>
+  <ul>
+    ${novel.chapters.map((c,i)=>`
+      <li><a href="read.html?id=${id}&ch=${i}">${c.title}</a></li>
+    `).join("")}
+  </ul>
+`;
+</script>
+
+</body>
+</html>
