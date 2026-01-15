@@ -18,12 +18,15 @@
 <script src="../assets/js/supabase.js"></script>
 
 <!-- 3️⃣ LOGIN SCRIPT -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase.js"></script>
+
 <script>
 async function login() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { error } = await supabaseClient.auth.signInWithPassword({
     email,
     password
   });
@@ -35,6 +38,7 @@ async function login() {
   }
 }
 </script>
+
 
 </body>
 </html>
