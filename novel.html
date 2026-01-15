@@ -1,35 +1,42 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Novel</title>
-<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
 <div id="novel"></div>
+<ul id="chapters"></ul>
 
-<script src="assets/js/data.js"></script>
+<script src="assets/js/supabase.js"></script>
 <script>
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
-const novel = novels.find(n => n.id === id);
+const id = new URLSearchParams(location.search).get("id");
 
-document.getElementById("novel").innerHTML = `
-  <img src="${novel.cover}" class="cover">
-  <h1>${novel.title}</h1>
-  <p class="author">${novel.author}</p>
-  <p>${novel.description}</p>
+async function load() {
+  const { data: novel } = await supabase
+    .from("novels")
+    .select("*")
+    .eq("id", id)
+    .single();
 
-  <h3>Chapter</h3>
-  <ul>
-    ${novel.chapters.map((c,i)=>`
-      <li><a href="read.html?id=${id}&ch=${i}">${c.title}</a></li>
-    `).join("")}
-  </ul>
-`;
+  const { data: chapters } = await supabase
+    .from("chapters")
+    .select("*")
+    .eq("novel_id", id)
+    .order("chapter_order");
+
+  document.getElementById("novel").innerHTML = `
+    <h1>${novel.title}</h1>
+    <p>${novel.description}</p>
+  `;
+
+  document.getElementById("chapters").innerHTML =
+    chapters.map(c =>
+      `<li><a href="read.html?id=${c.id}">${c.title}</a></li>`
+    ).join("");
+}
+load();
 </script>
-
 </body>
 </html>

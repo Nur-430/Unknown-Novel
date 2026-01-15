@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Kelola Chapter</title>
+</head>
+<body>
+
+<h1>Kelola Chapter</h1>
+
+<h3>Tambah Chapter</h3>
+<input id="title" placeholder="Judul chapter"><br>
+<input id="order" type="number" placeholder="Urutan"><br>
+<textarea id="content" rows="10" placeholder="Isi chapter"></textarea><br>
+<input type="file" id="img"><br>
+<button onclick="addChapter()">Simpan Chapter</button>
+
+<hr>
+
+<h3>Daftar Chapter</h3>
+<div id="chapters"></div>
+
+<script src="../assets/js/supabase.js"></script>
+<script src="../assets/js/admin-chapters.js"></script>
+</body>
+</html>

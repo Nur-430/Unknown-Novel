@@ -1,50 +1,31 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Baca Novel</title>
-<link rel="stylesheet" href="assets/css/style.css">
+<title>Baca</title>
 </head>
 <body>
 
-<article id="reader"></article>
+<div id="content"></div>
 
-<div class="nav">
-  <button onclick="prev()">Prev</button>
-  <button onclick="next()">Next</button>
-</div>
-
-<script src="assets/js/data.js"></script>
+<script src="assets/js/supabase.js"></script>
 <script>
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
-let ch = parseInt(params.get("ch"));
+const id = new URLSearchParams(location.search).get("id");
 
-const novel = novels.find(n => n.id === id);
-const reader = document.getElementById("reader");
+async function load() {
+  const { data } = await supabase
+    .from("chapters")
+    .select("*")
+    .eq("id", id)
+    .single();
 
-function load(){
-  reader.innerHTML = `
-    <h1>${novel.title}</h1>
-    <h2>${novel.chapters[ch].title}</h2>
-    <p>${novel.chapters[ch].content.replace(/\n/g,"<br>")}</p>
+  document.getElementById("content").innerHTML = `
+    <h2>${data.title}</h2>
+    ${data.illustration_url ? `<img src="${data.illustration_url}" width="100%">` : ""}
+    <p style="white-space:pre-line">${data.content}</p>
   `;
-}
-function next(){
-  if(ch < novel.chapters.length-1){
-    ch++;
-    load();
-  }
-}
-function prev(){
-  if(ch > 0){
-    ch--;
-    load();
-  }
 }
 load();
 </script>
-
 </body>
 </html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head><title>Admin Panel</title></head>
+<body>
+
+<h1>Admin Panel</h1>
+
+<h2>Daftar Novel</h2>
+<div id="novelList"></div>
+
+<script>
+async function loadNovels() {
+  const { data } = await supabase.from("novels").select("*");
+
+  document.getElementById("novelList").innerHTML = data.map(n => `
+    <div style="border:1px solid #444;padding:10px;margin:10px 0">
+      <b>${n.title}</b><br>
+      <button onclick="manageChapters('${n.id}')">Kelola Chapter</button>
+      <button onclick="deleteNovel('${n.id}')">Hapus Novel</button>
+    </div>
+  `).join("");
+}
+
+function manageChapters(id) {
+  location.href = `chapters.html?novel=${id}`;
+}
+
+async function deleteNovel(id) {
+  if (!confirm("Hapus novel & semua chapter?")) return;
+  await supabase.from("novels").delete().eq("id", id);
+  alert("Novel dihapus");
+  loadNovels();
+}
+
+loadNovels();
+</script>
+
+
+<h3>Tambah Novel</h3>
+<input id="title" placeholder="Judul">
+<textarea id="desc"></textarea>
+<input type="file" id="cover">
+<button onclick="addNovel()">Simpan</button>
+
+<hr>
+<div id="list"></div>
+
+<script src="../assets/js/supabase.js"></script>
+<script src="../assets/js/admin.js"></script>
+</body>
+</html>
