@@ -35,6 +35,14 @@ async function deleteNovel(id) {
 loadNovels();
 </script>
 
+<script>
+supabase.auth.getUser().then(({ data }) => {
+  if (!data.user) {
+    location.href = "login.html";
+  }
+});
+</script>
+
 
 <h3>Tambah Novel</h3>
 <input id="title" placeholder="Judul">

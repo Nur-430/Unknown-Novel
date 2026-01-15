@@ -1,26 +1,34 @@
 <!DOCTYPE html>
 <html>
-<head><title>Admin Login</title></head>
+<head>
+  <title>Admin Login</title>
+</head>
 <body>
 
 <h2>Admin Login</h2>
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
+
+<input id="email" type="email" placeholder="Email"><br>
+<input id="password" type="password" placeholder="Password"><br>
 <button onclick="login()">Login</button>
 
 <script src="../assets/js/supabase.js"></script>
 <script>
 async function login() {
-  const email = email.value;
-  const password = password.value;
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
 
   const { error } = await supabase.auth.signInWithPassword({
-    email, password
+    email: emailInput.value,
+    password: passwordInput.value
   });
 
-  if (error) alert("Login gagal");
-  else location.href = "dashboard.html";
+  if (error) {
+    alert("Login gagal: " + error.message);
+  } else {
+    location.href = "dashboard.html";
+  }
 }
 </script>
+
 </body>
 </html>
