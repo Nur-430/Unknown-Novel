@@ -11,15 +11,21 @@
 <input id="password" type="password" placeholder="Password"><br>
 <button onclick="login()">Login</button>
 
+<!-- 1️⃣ LOAD SDK SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- 2️⃣ INIT CLIENT -->
 <script src="../assets/js/supabase.js"></script>
+
+<!-- 3️⃣ LOGIN SCRIPT -->
 <script>
 async function login() {
-  const emailInput = document.getElementById("email");
-  const passwordInput = document.getElementById("password");
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
   const { error } = await supabase.auth.signInWithPassword({
-    email: emailInput.value,
-    password: passwordInput.value
+    email,
+    password
   });
 
   if (error) {
