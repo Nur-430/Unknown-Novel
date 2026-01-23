@@ -8,6 +8,8 @@
 <h2>Daftar Novel</h2>
 <div id="novelList"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase.js"></script>
 <script>
 async function loadNovels() {
   const { data } = await supabase.from("novels").select("*");
@@ -53,7 +55,6 @@ supabase.auth.getUser().then(({ data }) => {
 <hr>
 <div id="list"></div>
 
-<script src="../assets/js/supabase.js"></script>
 <script src="../assets/js/admin.js"></script>
 </body>
 </html>
