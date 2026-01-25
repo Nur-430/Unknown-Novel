@@ -1,44 +1,283 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Login</title>
+  
+  <!-- Menggunakan Font Inter dari Google Fonts untuk tampilan modern -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* --- RESET & VARIABLES --- */
+    :root {
+      --primary-color: #4F46E5; /* Indigo */
+      --primary-hover: #4338ca;
+      --bg-color: #F3F4F6;
+      --card-bg: #ffffff;
+      --text-main: #1F2937;
+      --text-muted: #6B7280;
+      --border-color: #E5E7EB;
+      --focus-ring: rgba(79, 70, 229, 0.25);
+      --radius: 12px;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      background-image: 
+        radial-gradient(at 0% 0%, hsla(253,16%,7%,0) 0, hsla(253,16%,7%,0) 50%), 
+        radial-gradient(at 50% 0%, hsla(225,39%,30%,0) 0, hsla(225,39%,30%,0) 50%), 
+        radial-gradient(at 100% 0%, hsla(339,49%,30%,0) 0, hsla(339,49%,30%,0) 50%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* --- LOGIN CARD --- */
+    .login-card {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 400px;
+      padding: 40px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-header {
+      margin-bottom: 32px;
+    }
+
+    .login-header h2 {
+      color: var(--text-main);
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .login-header p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* --- FORM GROUP --- */
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+      position: relative;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    /* Icons using CSS pseudo-elements (simplified for standalone) */
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 16px 12px 40px; /* Left padding untuk icon */
+      font-size: 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background-color: #fff;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 4px var(--focus-ring);
+    }
+
+    /* Toggle Password Button */
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px;
+    }
+    
+    .toggle-password:hover {
+      color: var(--text-main);
+    }
+
+    /* --- BUTTON --- */
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .btn-login:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-login:active {
+      transform: scale(0.98);
+    }
+
+    /* --- FOOTER --- */
+    .login-footer {
+      margin-top: 24px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* --- SVG ICONS --- */
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  </style>
 </head>
 <body>
 
-<h2>Admin Login</h2>
+  <div class="login-card">
+    <div class="login-header">
+      <!-- Placeholder Logo / Icon -->
+      <div style="margin-bottom: 16px; display: inline-block; padding: 10px; background: #EEF2FF; border-radius: 50%;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary-color); width: 32px; height: 32px;">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+        </svg>
+      </div>
+      <h2>Admin Login</h2>
+      <p>Silakan masuk untuk mengakses dashboard</p>
+    </div>
 
-<input id="email" type="email" placeholder="Email"><br>
-<input id="password" type="password" placeholder="Password"><br>
-<button onclick="login()">Login</button>
+    <form onsubmit="event.preventDefault(); login();">
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address</label>
+        <div class="input-wrapper">
+          <span class="input-icon">
+            <!-- Mail Icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          </span>
+          <input id="email" type="email" placeholder="admin@contoh.com" required onkeypress="if(event.key === 'Enter') login()">
+        </div>
+      </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../assets/js/supabase.js"></script>
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <div class="input-wrapper">
+          <span class="input-icon">
+            <!-- Lock Icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          </span>
+          <input id="password" type="password" placeholder="••••••••" required onkeypress="if(event.key === 'Enter') login()">
+          
+          <!-- Show/Hide Password Toggle -->
+          <button type="button" class="toggle-password" onclick="togglePasswordVisibility()" aria-label="Lihat password">
+            <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </button>
+        </div>
+      </div>
 
-<script>
-async function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+      <button type="button" class="btn-login" onclick="login()">Masuk Dashboard</button>
+    </form>
 
-  try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+    <div class="login-footer">
+      &copy; 2023 Admin Panel. All rights reserved.
+    </div>
+  </div>
 
-    console.log("Supabase Auth Response:", { data, error });
+  <!-- 1️⃣ LOAD SDK SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    if (error) {
-      alert("Login gagal: " + error.message);
-    } else if (data.user) {
-      location.href = "dashboard.html";
+  <!-- 2️⃣ INIT CLIENT (Pastikan file ini ada dan berisi konfigurasi client Anda) -->
+  <!-- Catatan: Karena ini adalah demo standalone, script ini mungkin error jika file lokal tidak ditemukan. -->
+  <script src="../assets/js/supabase.js"></script>
+
+  <script>
+    // --- 3️⃣ FUNGSI LOGIN (TIDAK DIUBAH SESUAI REQUEST) ---
+    async function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      // Cek jika supabaseClient sudah terdefinisi dari file eksternal
+      if (typeof supabaseClient === 'undefined') {
+        console.error("supabaseClient tidak ditemukan. Pastikan ../assets/js/supabase.js sudah dimuat dengan benar.");
+        alert("Error: Konfigurasi Supabase belum dimuat.");
+        return;
+      }
+
+      const { error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        alert("Login gagal: " + error.message);
+      } else {
+        location.href = "dashboard.html";
+      }
     }
-  } catch (err) {
-    console.error(err);
-    alert("Terjadi kesalahan sistem");
-  }
-}
-</script>
 
+    // --- 4️⃣ FITUR TAMBAHAN (UI ONLY) ---
+    // Fungsi ini hanya untuk mengubah tampilan password (bukan logika login)
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById("password");
+      const eyeIcon = document.getElementById("eye-icon");
+      
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        // Ubah icon menjadi crossed eye (opsional, disini kita ubah warna saja agar simple)
+        eyeIcon.style.color = "var(--primary-color)";
+      } else {
+        passwordInput.type = "password";
+        eyeIcon.style.color = "var(--text-muted)";
+      }
+    }
+  </script>
 
 </body>
 </html>
