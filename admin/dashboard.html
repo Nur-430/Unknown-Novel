@@ -1,60 +1,201 @@
 <!DOCTYPE html>
-<html>
-<head><title>Admin Panel</title></head>
-<body>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Unknown Novel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 min-h-screen font-sans">
 
-<h1>Admin Panel</h1>
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-sm border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-indigo-600"><i class="fas fa-book-open mr-2"></i>Admin Panel</span>
+                </div>
+                <div class="flex items-center space-gap-4">
+                    <button onclick="logout()" class="text-slate-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-<h2>Daftar Novel</h2>
-<div id="novelList"></div>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Sidebar: Tambah Novel Form -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden sticky top-8">
+                    <div class="bg-indigo-600 px-6 py-4">
+                        <h3 class="text-white font-semibold text-lg flex items-center">
+                            <i class="fas fa-plus-circle mr-2"></i> Tambah Novel Baru
+                        </h3>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Judul Novel</label>
+                            <input id="title" type="text" placeholder="Masukkan judul..." 
+                                class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Deskripsi</label>
+                            <textarea id="desc" rows="4" placeholder="Tulis deskripsi singkat..." 
+                                class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Cover Image</label>
+                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-lg hover:border-indigo-400 transition cursor-pointer bg-slate-50 relative">
+                                <div class="space-y-1 text-center">
+                                    <i class="fas fa-image text-slate-400 text-3xl mb-2"></i>
+                                    <div class="flex text-sm text-slate-600">
+                                        <label for="cover" class="relative cursor-pointer rounded-md font-medium text-indigo-600 hover:text-indigo-500">
+                                            <span>Upload file</span>
+                                            <input id="cover" name="cover" type="file" class="sr-only">
+                                        </label>
+                                        <p class="pl-1">atau drag and drop</p>
+                                    </div>
+                                    <p class="text-xs text-slate-500">PNG, JPG, GIF up to 2MB</p>
+                                </div>
+                                <img id="preview" class="absolute inset-0 w-full h-full object-cover hidden rounded-lg pointer-events-none">
+                            </div>
+                        </div>
+                        <button onclick="addNovel()" 
+                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition transform active:scale-95 flex justify-center items-center">
+                            <i class="fas fa-save mr-2"></i> Simpan Novel
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../assets/js/supabase.js"></script>
-<script>
-async function loadNovels() {
-  const { data } = await supabase.from("novels").select("*");
+            <!-- Content: Daftar Novel -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                        <h2 class="text-xl font-bold text-slate-800">Daftar Koleksi Novel</h2>
+                        <span id="novelCount" class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-semibold">0 Novel</span>
+                    </div>
+                    <div id="novelList" class="divide-y divide-slate-100">
+                        <!-- Loading State -->
+                        <div class="p-12 text-center text-slate-400">
+                            <i class="fas fa-spinner fa-spin text-3xl mb-4"></i>
+                            <p>Memuat data novel...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 
-  document.getElementById("novelList").innerHTML = data.map(n => `
-    <div style="border:1px solid #444;padding:10px;margin:10px 0">
-      <b>${n.title}</b><br>
-      <button onclick="manageChapters('${n.id}')">Kelola Chapter</button>
-      <button onclick="deleteNovel('${n.id}')">Hapus Novel</button>
-    </div>
-  `).join("");
-}
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/supabase.js"></script>
+    <script src="../assets/js/admin.js"></script>
 
-function manageChapters(id) {
-  location.href = `chapters.html?novel=${id}`;
-}
+    <script>
+    // Preview Image before upload
+    document.getElementById('cover').addEventListener('change', function(e) {
+        const preview = document.getElementById('preview');
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+            }
+            reader.readAsDataURL(file);
+        }
+    });
 
-async function deleteNovel(id) {
-  if (!confirm("Hapus novel & semua chapter?")) return;
-  await supabase.from("novels").delete().eq("id", id);
-  alert("Novel dihapus");
-  loadNovels();
-}
+    async function loadNovels() {
+        try {
+            const { data, error } = await supabase.from("novels").select("*").order('created_at', { ascending: false });
+            
+            if (error) throw error;
 
-loadNovels();
-</script>
+            const novelList = document.getElementById("novelList");
+            const novelCount = document.getElementById("novelCount");
+            
+            novelCount.innerText = `${data.length} Novel`;
 
-<script>
-supabase.auth.getUser().then(({ data }) => {
-  if (!data.user) {
-    location.href = "login.html";
-  }
-});
-</script>
+            if (data.length === 0) {
+                novelList.innerHTML = `
+                    <div class="p-12 text-center text-slate-400">
+                        <i class="fas fa-folder-open text-3xl mb-4"></i>
+                        <p>Belum ada novel yang ditambahkan.</p>
+                    </div>
+                `;
+                return;
+            }
 
+            novelList.innerHTML = data.map(n => `
+                <div class="p-6 flex flex-col sm:flex-row items-start sm:items-center gap-6 hover:bg-slate-50 transition group">
+                    <div class="w-24 h-32 flex-shrink-0 bg-slate-200 rounded-lg overflow-hidden shadow-sm">
+                        <img src="${n.cover_url || 'https://via.placeholder.com/150x200?text=No+Cover'}" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition duration-300" 
+                             alt="${n.title}">
+                    </div>
+                    <div class="flex-grow">
+                        <h4 class="text-lg font-bold text-slate-800 mb-1">${n.title}</h4>
+                        <p class="text-sm text-slate-500 line-clamp-2 mb-4">${n.description || 'Tidak ada deskripsi.'}</p>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="manageChapters('${n.id}')" 
+                                class="inline-flex items-center px-4 py-2 border border-indigo-600 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-600 hover:text-white transition shadow-sm">
+                                <i class="fas fa-list-ul mr-2"></i> Chapters
+                            </button>
+                            <button onclick="deleteNovel('${n.id}')" 
+                                class="inline-flex items-center px-4 py-2 border border-red-200 text-red-600 rounded-lg text-sm font-medium hover:bg-red-50 transition">
+                                <i class="fas fa-trash-alt mr-2"></i> Hapus
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join("");
+        } catch (err) {
+            console.error("Gagal load novel:", err);
+            document.getElementById("novelList").innerHTML = `
+                <div class="p-12 text-center text-red-500">
+                    <i class="fas fa-exclamation-triangle text-3xl mb-4"></i>
+                    <p>Terjadi kesalahan saat memuat data.</p>
+                </div>
+            `;
+        }
+    }
 
-<h3>Tambah Novel</h3>
-<input id="title" placeholder="Judul">
-<textarea id="desc"></textarea>
-<input type="file" id="cover">
-<button onclick="addNovel()">Simpan</button>
+    function manageChapters(id) {
+        location.href = `chapters.html?novel=${id}`;
+    }
 
-<hr>
-<div id="list"></div>
+    async function deleteNovel(id) {
+        if (!confirm("Hapus novel & semua chapter? Tindakan ini tidak bisa dibatalkan.")) return;
+        
+        try {
+            const { error } = await supabase.from("novels").delete().eq("id", id);
+            if (error) throw error;
+            
+            alert("Novel berhasil dihapus");
+            loadNovels();
+        } catch (err) {
+            alert("Gagal menghapus novel: " + err.message);
+        }
+    }
 
-<script src="../assets/js/admin.js"></script>
+    async function logout() {
+        await supabase.auth.signOut();
+        location.href = "login.html";
+    }
+
+    // Auth check
+    supabase.auth.getUser().then(({ data }) => {
+        if (!data.user) {
+            location.href = "login.html";
+        } else {
+            loadNovels();
+        }
+    });
+    </script>
 </body>
 </html>
