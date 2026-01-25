@@ -25,6 +25,8 @@ async function login() {
       password
     });
 
+    console.log("Supabase Auth Response:", { data, error });
+
     if (error) {
       alert("Login gagal: " + error.message);
     } else if (data.user) {
