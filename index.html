@@ -1,269 +1,46 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unknown Novel - Baca Novel Online</title>
-  
-  <!-- Font Modern -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-
-  <!-- CSS Internal (Menggantikan assets/css/style.css untuk demo ini) -->
-  <style>
-    /* --- RESET & VARIABLES --- */
-    :root {
-      --primary-color: #0ea5e9; /* Sky Blue */
-      --primary-dark: #0284c7;
-      --bg-color: #F8FAFC;
-      --text-main: #0F172A;
-      --text-muted: #64748B;
-      --card-bg: #ffffff;
-      --border-color: #E2E8F0;
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      --radius: 12px;
-      --container-width: 1200px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      line-height: 1.6;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* --- HEADER / NAVBAR --- */
-    header {
-      background-color: var(--card-bg);
-      border-bottom: 1px solid var(--border-color);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      padding: 1rem 0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-
-    .navbar {
-      max-width: var(--container-width);
-      margin: 0 auto;
-      padding: 0 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--text-main);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .logo span {
-      color: var(--primary-color);
-    }
-
-    .btn-login {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 10px 20px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: all 0.2s ease;
-    }
-
-    .btn-login:hover {
-      background-color: var(--primary-dark);
-      transform: translateY(-1px);
-    }
-
-    /* --- MAIN CONTENT --- */
-    main {
-      flex: 1;
-      max-width: var(--container-width);
-      width: 100%;
-      margin: 0 auto;
-      padding: 40px 20px;
-    }
-
-    .section-title {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-      color: var(--text-main);
-      font-family: 'Merriweather', serif; /* Font Serif untuk judul kesan "Novel" */
-    }
-
-    .section-subtitle {
-      color: var(--text-muted);
-      margin-bottom: 30px;
-    }
-
-    /* --- NOVEL GRID SYSTEM --- */
-    /* Layout responsif untuk container novel */
-    #novels {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 24px;
-    }
-
-    /* Style untuk elemen yang di-generate JavaScript (Disesuaikan secara generik) */
-    #novels > div {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      overflow: hidden;
-      border: 1px solid var(--border-color);
-      transition: all 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-
-    #novels > div:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-hover);
-      border-color: var(--primary-color);
-    }
-
-    /* Style Gambar Novel */
-    #novels img {
-      width: 100%;
-      height: 300px; /* Tinggi tetap agar rapi */
-      object-fit: cover;
-      background-color: #e2e8f0; /* Placeholder color */
-    }
-
-    /* Style Judul Novel */
-    #novels h3, 
-    #novels h2, 
-    #novels h4 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      padding: 15px 15px 5px 15px;
-      margin: 0;
-      color: var(--text-main);
-      /* Membatasi teks jika terlalu panjang */
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    /* Style Deskripsi / Teks lainnya */
-    #novels p {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      padding: 0 15px 15px 15px;
-      line-height: 1.5;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    /* Style Link tombol di dalam card (jika ada) */
-    #novels a {
-      text-decoration: none;
-      color: var(--primary-color);
-      font-weight: 600;
-      margin-top: auto; /* Mendorong ke bawah */
-      padding: 15px;
-      border-top: 1px solid var(--border-color);
-      text-align: center;
-      background-color: #f8fafc;
-      transition: background 0.2s;
-    }
-    
-    #novels a:hover {
-      background-color: #eef2ff;
-      color: var(--primary-dark);
-    }
-
-    /* --- FOOTER --- */
-    footer {
-      background-color: #1e293b;
-      color: #94a3b8;
-      text-align: center;
-      padding: 20px;
-      font-size: 0.85rem;
-      margin-top: auto;
-    }
-
-    /* --- RESPONSIVE --- */
-    @media (max-width: 600px) {
-      .navbar {
-        flex-direction: column;
-        gap: 15px;
-      }
-      .section-title {
-        font-size: 1.5rem;
-      }
-      #novels {
-        grid-template-columns: repeat(2, 1fr); /* 2 kolom di mobile */
-        gap: 15px;
-      }
-      #novels img {
-        height: 200px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unknown Novel</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-  <!-- Header Navigation -->
-  <header>
-    <div class="navbar">
-      <a href="index.html" class="logo">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary-color)"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-        Unknown <span>Novel</span>
-      </a>
-      
-      <!-- Tombol Login Admin di Pojok Kanan -->
-      <a href="admin/login.html" class="btn-login">Admin Login</a>
-    </div>
-  </header>
-
-  <!-- Konten Utama -->
-  <main>
-    <div class="hero-text">
-      <h1 class="section-title">Koleksi Novel Terbaru</h1>
-      <p class="section-subtitle">Temukan cerita terbaik dan baca secara gratis setiap hari.</p>
-    </div>
-
-    <!-- Container ini akan diisi oleh JavaScript (Supabase) -->
-    <div id="novels">
-      <!-- 
-        CATATAN DEVELOPER:
-        Script assets/js/public.js akan mengisi bagian ini.
-        CSS di atas sudah diatur untuk merapikan elemen apapun yang masuk ke sini.
-      -->
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2023 Unknown Novel. All rights reserved.</p>
-  </footer>
-
-  <!-- SCRIPT ASLI (TIDAK DIUBAH) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/js/supabase.js"></script>
-  <script src="assets/js/public.js"></script>
+    <header>
+        <h1>Welcome to Unknown Novel</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#novels">Novels</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="home">
+            <h2>Featured Novels</h2>
+            <!-- Improved novel display here -->
+            <div class="novel-display">
+                <div class="novel">
+                    <h3>Novel Title 1</h3>
+                    <p>Description of Novel 1...</p>
+                </div>
+                <div class="novel">
+                    <h3>Novel Title 2</h3>
+                    <p>Description of Novel 2...</p>
+                </div>
+            </div>
+        </section>
+        <section id="login">
+            <h2>Login</h2>
+            <button class="login-btn">Log In</button>
+        </section>
+    </main>
+    <footer>
+        <p>© 2026 Unknown Novel. All rights reserved.</p>
+        <button class="nav-btn">Navigate to Top</button>
+    </footer>
 </body>
 </html>
