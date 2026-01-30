@@ -1,43 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Novel</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Novel</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-slate-50 font-sans">
+  <div class="max-w-3xl mx-auto py-10 px-4">
+    <a href="index.html" class="text-indigo-600 hover:underline text-sm mb-6 inline-block"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
+    <div id="novel-detail" class="bg-white shadow-lg rounded-xl flex flex-col md:flex-row gap-8 p-6 md:p-10 mb-8"></div>
+    <div class="bg-white shadow rounded-xl p-6 mb-8">
+      <h2 class="font-bold text-lg mb-2 text-slate-800">Sinopsis</h2>
+      <div id="novel-synopsis" class="text-slate-600 mb-3"></div>
+    </div>
+    <div class="bg-white shadow rounded-xl p-6">
+      <h2 class="font-bold text-lg mb-2 text-slate-800">Daftar Chapter</h2>
+      <ul id="chapters-list" class="divide-y divide-slate-100"></ul>
+    </div>
+  </div>
 
-<div id="novel"></div>
-<ul id="chapters"></ul>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/supabase.js"></script>
-<script>
-const id = new URLSearchParams(location.search).get("id");
-
-async function load() {
-  const { data: novel } = await supabase
-    .from("novels")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  const { data: chapters } = await supabase
-    .from("chapters")
-    .select("*")
-    .eq("novel_id", id)
-    .order("chapter_order");
-
-  document.getElementById("novel").innerHTML = `
-    <h1>${novel.title}</h1>
-    <p>${novel.description}</p>
-  `;
-
-  document.getElementById("chapters").innerHTML =
-    chapters.map(c =>
-      `<li><a href="read.html?id=${c.id}">${c.title}</a></li>`
-    ).join("");
-}
-load();
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/js/all.min.js"></script>
+  <script>
+    const id = new URLSearchParams(location.search).get("id");
+    async function load() {
+      const { data: novel } = await supabase
+        .from("novels")
+        .select("*")
+        .eq("id", id)
+        .single();
+      const { data: chapters } = await supabase
+        .from("chapters")
+        .select("*")
+        .eq("novel_id", id)
+        .order("chapter_order");
+      // Card detail layout
+      document.getElementById("novel-detail").innerHTML = `
+        <div class='w-full md:w-56 flex-shrink-0'>
+          <img src="${novel.cover_url || 'https://via.placeholder.com/200x280?text=No+Cover'}" alt="${novel.title}" class="rounded-xl shadow object-cover w-full h-80 md:w-56 md:h-80 bg-slate-200">
+        </div>
+        <div class="flex-1 flex flex-col gap-2">
+          <h1 class="font-bold text-2xl text-slate-800 mb-1">${novel.title}</h1>
+          <div class="text-slate-500 text-sm">
+            <span class="inline-block mr-3"><b>Genre:</b> ${novel.genre||'-'}</span>
+            <span class="inline-block mr-3"><b>Author:</b> ${novel.author||'-'}</span>
+          </div>
+          <div class="text-slate-500 text-sm">
+            <span class="inline-block mr-3"><b>Tahun:</b> ${novel.year||'-'}</span>
+            <span class="inline-block"><b>Status:</b> <span class="font-bold ${novel.status==='Ongoing'?'text-green-600':'text-red-500'}">${novel.status||'-'}</span></span>
+          </div>
+        </div>
+      `;
+      // Sinopsis
+      document.getElementById('novel-synopsis').innerText = novel.description||'-';
+      // Chapter list
+      document.getElementById('chapters-list').innerHTML =
+        (chapters&&chapters.length) ? chapters.map((c,i)=>
+          `<li class="py-3 flex justify-between items-center">
+            <span class="font-medium text-slate-700">${i+1}. <a href='read.html?id=${c.id}' class='text-indigo-600 hover:underline'>${c.title}</a></span>
+            <span class="text-xs text-slate-400">Order: ${c.chapter_order}</span>
+          </li>"
+        ).join("")
+        : '<li class="py-4 text-slate-400 text-center">Belum ada chapter.</li>';
+    }
+    load();
+  </script>
 </body>
 </html>
