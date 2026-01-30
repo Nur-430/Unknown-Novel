@@ -1,46 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unknown Novel</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Unknown Novel - Baca Web Novel Gratis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
-    <header>
-        <h1>Welcome to Unknown Novel</h1>
-        <nav>
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#novels">Novels</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
+<body class="bg-slate-50 min-h-screen font-sans pb-24">
+
+    <!-- Header / Navbar -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold text-indigo-600 flex items-center">
+                <i class="fas fa-book-open mr-2"></i>Unknown Novel
+            </a>
+            <a href="admin/login.html" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full text-sm font-semibold transition shadow-md active:scale-95">
+                <i class="fas fa-user-shield mr-1"></i> Login
+            </a>
+        </div>
     </header>
-    <main>
-        <section id="home">
-            <h2>Featured Novels</h2>
-            <!-- Improved novel display here -->
-            <div class="novel-display">
-                <div class="novel">
-                    <h3>Novel Title 1</h3>
-                    <p>Description of Novel 1...</p>
-                </div>
-                <div class="novel">
-                    <h3>Novel Title 2</h3>
-                    <p>Description of Novel 2...</p>
-                </div>
+
+    <!-- Hero Section -->
+    <section class="bg-indigo-600 py-12 px-4 text-center">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-4">Temukan Cerita Favoritmu</h1>
+        <p class="text-indigo-100 max-w-2xl mx-auto">Baca web novel terbaru dan terpopuler dari berbagai genre secara gratis.</p>
+    </section>
+
+    <!-- Content: Novel Grid -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <div class="flex items-center justify-between mb-8 border-b border-slate-200 pb-4">
+            <h2 class="text-xl font-bold text-slate-800">Update Terbaru</h2>
+            <div class="flex gap-2 text-sm">
+                <span class="text-indigo-600 font-medium">Semua</span>
+                <span class="text-slate-400">|</span>
+                <span class="text-slate-500 hover:text-indigo-600 cursor-pointer transition">Populer</span>
             </div>
-        </section>
-        <section id="login">
-            <h2>Login</h2>
-            <button class="login-btn">Log In</button>
-        </section>
+        </div>
+
+        <div id="novels" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+            <!-- Loading skeleton placeholder -->
+            <div class="animate-pulse space-y-3">
+                <div class="bg-slate-200 aspect-[3/4] rounded-lg"></div>
+                <div class="h-4 bg-slate-200 rounded w-3/4"></div>
+                <div class="h-3 bg-slate-200 rounded w-1/2"></div>
+            </div>
+        </div>
     </main>
-    <footer>
-        <p>© 2026 Unknown Novel. All rights reserved.</p>
-        <button class="nav-btn">Navigate to Top</button>
-    </footer>
+
+    <!-- Bottom Navigation (Floating) -->
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md border border-slate-200 shadow-2xl rounded-2xl px-8 py-3 z-50 flex gap-12">
+        <a href="index.html" class="flex flex-col items-center gap-1 text-indigo-600 font-semibold group">
+            <i class="fas fa-home text-lg"></i>
+            <span class="text-[10px] uppercase tracking-wider">Home</span>
+        </a>
+        <a href="#" class="flex flex-col items-center gap-1 text-slate-500 hover:text-indigo-600 transition group">
+            <i class="fas fa-th-large text-lg"></i>
+            <span class="text-[10px] uppercase tracking-wider">Genre</span>
+        </a>
+        <a href="admin/login.html" class="flex flex-col items-center gap-1 text-slate-500 hover:text-indigo-600 transition group">
+            <i class="fas fa-user-circle text-lg"></i>
+            <span class="text-[10px] uppercase tracking-wider">Akun</span>
+        </a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/supabase.js"></script>
+    <script src="assets/js/public.js"></script>
 </body>
 </html>
