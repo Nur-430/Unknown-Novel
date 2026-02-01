@@ -1,5 +1,5 @@
-const SUPABASE_URL = "https://nbdqvvhoqbahkfzwkppw.supabase.co";
-const SUPABASE_KEY = "sb_publishable_f_SXDmpiAE0l0qYthRvBCw_WJmvA43U";
+const SUPABASE_URL = "https://oedymlrxlthmlgyrgvzp.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lZHltbHJ4bHRobWxneXJndnpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk5NDIxODQsImV4cCI6MjA4NTUxODE4NH0.E3oBmIDdPE0x7rBDuR5ag-c14aWTZL28nnO_7TUVd44";
 
 // Test if URL is reachable
 console.log("Initializing Supabase with URL:", SUPABASE_URL);
