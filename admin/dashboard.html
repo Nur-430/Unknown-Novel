@@ -14,6 +14,12 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
+
+        .genre-checkbox:checked+label {
+            background-color: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
     </style>
 </head>
 
@@ -27,7 +33,17 @@
                     <span class="text-2xl font-bold text-indigo-600"><i class="fas fa-book-open mr-2"></i>Admin
                         Panel</span>
                 </div>
-                <div class="flex items-center space-gap-4">
+                <div class="flex items-center gap-2">
+                    <!-- Tab Navigation -->
+                    <button onclick="switchTab('novels')" id="tabNovels"
+                        class="tab-btn px-4 py-2 rounded-lg bg-indigo-100 text-indigo-600 font-medium text-sm transition">
+                        <i class="fas fa-book mr-1"></i> Novel
+                    </button>
+                    <button onclick="switchTab('genres')" id="tabGenres"
+                        class="tab-btn px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium text-sm transition">
+                        <i class="fas fa-tags mr-1"></i> Genre
+                    </button>
+                    <div class="w-px h-6 bg-slate-200 mx-2"></div>
                     <button onclick="logout()"
                         class="text-slate-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition">
                         <i class="fas fa-sign-out-alt mr-1"></i> Logout
@@ -38,113 +54,191 @@
     </nav>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-            <!-- Sidebar: Tambah Novel Form -->
-            <div class="lg:col-span-1">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden sticky top-8">
-                    <div id="formHeader" class="bg-indigo-600 px-6 py-4">
-                        <h3 id="formTitle" class="text-white font-semibold text-lg flex items-center">
-                            <i class="fas fa-plus-circle mr-2"></i> Tambah Novel Baru
-                        </h3>
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <input type="hidden" id="editNovelId" value="">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Judul Novel <span
-                                    class="text-red-500">*</span></label>
-                            <input id="title" type="text" placeholder="Masukkan judul..."
-                                class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+        <!-- NOVELS TAB -->
+        <div id="panelNovels" class="tab-panel">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Sidebar: Tambah Novel Form -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden sticky top-8">
+                        <div id="formHeader" class="bg-indigo-600 px-6 py-4">
+                            <h3 id="formTitle" class="text-white font-semibold text-lg flex items-center">
+                                <i class="fas fa-plus-circle mr-2"></i> Tambah Novel Baru
+                            </h3>
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="p-6 space-y-4">
+                            <input type="hidden" id="editNovelId" value="">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Judul Novel <span
+                                        class="text-red-500">*</span></label>
+                                <input id="title" type="text" placeholder="Masukkan judul..."
+                                    class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                            </div>
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Author</label>
                                 <input id="author" type="text" placeholder="Nama penulis..."
                                     class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Genre</label>
-                                <input id="genre" type="text" placeholder="Contoh: Fantasy, Romance..."
-                                    class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Tahun Rilis</label>
-                                <input id="year" type="number" placeholder="2024" min="1900" max="2100"
-                                    class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Status</label>
-                                <select id="status"
-                                    class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
-                                    <option value="">Pilih status...</option>
-                                    <option value="Ongoing">Ongoing</option>
-                                    <option value="Completed">Completed</option>
-                                    <option value="Hiatus">Hiatus</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Sinopsis</label>
-                            <textarea id="desc" rows="4" placeholder="Tulis sinopsis novel..."
-                                class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition resize-none"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Cover Image</label>
-                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-lg hover:border-indigo-400 transition cursor-pointer bg-slate-50 relative"
-                                style="min-height: 120px;">
-                                <div id="uploadText" class="space-y-1 text-center">
-                                    <i class="fas fa-image text-slate-400 text-3xl mb-2"></i>
-                                    <div class="flex text-sm text-slate-600">
-                                        <label for="cover"
-                                            class="relative cursor-pointer rounded-md font-medium text-indigo-600 hover:text-indigo-500">
-                                            <span>Upload file</span>
-                                            <input id="cover" name="cover" type="file" accept="image/*" class="sr-only">
-                                        </label>
-                                        <p class="pl-1">atau drag and drop</p>
-                                    </div>
-                                    <p class="text-xs text-slate-500">PNG, JPG, GIF up to 2MB</p>
-                                </div>
-                                <img id="preview" class="absolute inset-0 w-full h-full object-cover hidden rounded-lg">
-                            </div>
-                        </div>
 
-                        <!-- Action Buttons -->
-                        <div id="addButtonWrapper">
-                            <button onclick="addNovel()"
-                                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition transform active:scale-95 flex justify-center items-center">
-                                <i class="fas fa-save mr-2"></i> Simpan Novel
-                            </button>
+                            <!-- Genre Multi-Select -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Genre</label>
+                                <div id="genreSelect"
+                                    class="flex flex-wrap gap-2 p-3 bg-slate-50 border border-slate-300 rounded-lg max-h-40 overflow-y-auto">
+                                    <span class="text-slate-400 text-sm">Memuat genre...</span>
+                                </div>
+                                <input type="hidden" id="selectedGenres" value="">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Tahun Rilis</label>
+                                    <input id="year" type="number" placeholder="2024" min="1900" max="2100"
+                                        class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Status</label>
+                                    <select id="status"
+                                        class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                                        <option value="">Pilih status...</option>
+                                        <option value="Ongoing">Ongoing</option>
+                                        <option value="Completed">Completed</option>
+                                        <option value="Hiatus">Hiatus</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Sinopsis</label>
+                                <textarea id="desc" rows="4" placeholder="Tulis sinopsis novel..."
+                                    class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition resize-none"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Cover Image</label>
+                                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-lg hover:border-indigo-400 transition cursor-pointer bg-slate-50 relative"
+                                    style="min-height: 120px;">
+                                    <div id="uploadText" class="space-y-1 text-center">
+                                        <i class="fas fa-image text-slate-400 text-3xl mb-2"></i>
+                                        <div class="flex text-sm text-slate-600">
+                                            <label for="cover"
+                                                class="relative cursor-pointer rounded-md font-medium text-indigo-600 hover:text-indigo-500">
+                                                <span>Upload file</span>
+                                                <input id="cover" name="cover" type="file" accept="image/*"
+                                                    class="sr-only">
+                                            </label>
+                                            <p class="pl-1">atau drag and drop</p>
+                                        </div>
+                                        <p class="text-xs text-slate-500">PNG, JPG, GIF up to 2MB</p>
+                                    </div>
+                                    <img id="preview"
+                                        class="absolute inset-0 w-full h-full object-cover hidden rounded-lg">
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div id="addButtonWrapper">
+                                <button onclick="addNovel()"
+                                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition transform active:scale-95 flex justify-center items-center">
+                                    <i class="fas fa-save mr-2"></i> Simpan Novel
+                                </button>
+                            </div>
+                            <div id="editButtonWrapper" class="hidden space-y-2">
+                                <button onclick="updateNovel()"
+                                    class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition transform active:scale-95 flex justify-center items-center">
+                                    <i class="fas fa-check mr-2"></i> Update Novel
+                                </button>
+                                <button onclick="cancelEdit()"
+                                    class="w-full bg-slate-500 hover:bg-slate-600 text-white font-bold py-3 px-4 rounded-lg shadow-md transition transform active:scale-95 flex justify-center items-center">
+                                    <i class="fas fa-times mr-2"></i> Batal
+                                </button>
+                            </div>
                         </div>
-                        <div id="editButtonWrapper" class="hidden space-y-2">
-                            <button onclick="updateNovel()"
-                                class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition transform active:scale-95 flex justify-center items-center">
-                                <i class="fas fa-check mr-2"></i> Update Novel
-                            </button>
-                            <button onclick="cancelEdit()"
-                                class="w-full bg-slate-500 hover:bg-slate-600 text-white font-bold py-3 px-4 rounded-lg shadow-md transition transform active:scale-95 flex justify-center items-center">
-                                <i class="fas fa-times mr-2"></i> Batal
-                            </button>
+                    </div>
+                </div>
+
+                <!-- Content: Daftar Novel -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                            <h2 class="text-xl font-bold text-slate-800">Daftar Koleksi Novel</h2>
+                            <span id="novelCount"
+                                class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-semibold">0
+                                Novel</span>
+                        </div>
+                        <div id="novelList" class="divide-y divide-slate-100">
+                            <!-- Loading State -->
+                            <div class="p-12 text-center text-slate-400">
+                                <i class="fas fa-spinner fa-spin text-3xl mb-4"></i>
+                                <p>Memuat data novel...</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Content: Daftar Novel -->
-            <div class="lg:col-span-2">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-                        <h2 class="text-xl font-bold text-slate-800">Daftar Koleksi Novel</h2>
-                        <span id="novelCount"
-                            class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-semibold">0
-                            Novel</span>
+        <!-- GENRES TAB -->
+        <div id="panelGenres" class="tab-panel hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Sidebar: Add/Edit Genre Form -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden sticky top-8">
+                        <div id="genreFormHeader" class="bg-purple-600 px-6 py-4">
+                            <h3 id="genreFormTitle" class="text-white font-semibold text-lg flex items-center">
+                                <i class="fas fa-plus-circle mr-2"></i> Tambah Genre Baru
+                            </h3>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <input type="hidden" id="editGenreId" value="">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Nama Genre <span
+                                        class="text-red-500">*</span></label>
+                                <input id="genreName" type="text" placeholder="Contoh: Fantasy"
+                                    class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Slug (URL)</label>
+                                <input id="genreSlug" type="text" placeholder="fantasy"
+                                    class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
+                                    oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9-]/g, '-')">
+                                <p class="text-xs text-slate-400 mt-1">Huruf kecil, tanpa spasi</p>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div id="addGenreButtonWrapper">
+                                <button onclick="addGenre()"
+                                    class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition transform active:scale-95 flex justify-center items-center">
+                                    <i class="fas fa-save mr-2"></i> Simpan Genre
+                                </button>
+                            </div>
+                            <div id="editGenreButtonWrapper" class="hidden space-y-2">
+                                <button onclick="updateGenre()"
+                                    class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition transform active:scale-95 flex justify-center items-center">
+                                    <i class="fas fa-check mr-2"></i> Update Genre
+                                </button>
+                                <button onclick="cancelEditGenre()"
+                                    class="w-full bg-slate-500 hover:bg-slate-600 text-white font-bold py-3 px-4 rounded-lg shadow-md transition transform active:scale-95 flex justify-center items-center">
+                                    <i class="fas fa-times mr-2"></i> Batal
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div id="novelList" class="divide-y divide-slate-100">
-                        <!-- Loading State -->
-                        <div class="p-12 text-center text-slate-400">
-                            <i class="fas fa-spinner fa-spin text-3xl mb-4"></i>
-                            <p>Memuat data novel...</p>
+                </div>
+
+                <!-- Content: Genre List -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                            <h2 class="text-xl font-bold text-slate-800">Daftar Genre</h2>
+                            <span id="genreCount"
+                                class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-semibold">0
+                                Genre</span>
+                        </div>
+                        <div id="genreList" class="p-6">
+                            <!-- Loading State -->
+                            <div class="text-center text-slate-400">
+                                <i class="fas fa-spinner fa-spin text-3xl mb-4"></i>
+                                <p>Memuat data genre...</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -157,6 +251,8 @@
     <script src="../assets/js/admin.js"></script>
 
     <script>
+        let allGenres = [];
+
         // Preview Image before upload
         document.getElementById('cover').addEventListener('change', function (e) {
             const preview = document.getElementById('preview');
@@ -173,6 +269,212 @@
             }
         });
 
+        // Auto-generate slug from genre name
+        document.getElementById('genreName').addEventListener('input', function (e) {
+            const slug = e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            document.getElementById('genreSlug').value = slug;
+        });
+
+        // Tab switching
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-100', 'text-indigo-600');
+                btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+            });
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
+
+            if (tab === 'novels') {
+                document.getElementById('tabNovels').classList.add('bg-indigo-100', 'text-indigo-600');
+                document.getElementById('tabNovels').classList.remove('text-slate-600', 'hover:bg-slate-100');
+                document.getElementById('panelNovels').classList.remove('hidden');
+            } else {
+                document.getElementById('tabGenres').classList.add('bg-indigo-100', 'text-indigo-600');
+                document.getElementById('tabGenres').classList.remove('text-slate-600', 'hover:bg-slate-100');
+                document.getElementById('panelGenres').classList.remove('hidden');
+            }
+        }
+
+        // Load genres for multi-select
+        async function loadGenresForSelect() {
+            try {
+                const { data, error } = await supabase.from("genres").select("*").order('name', { ascending: true });
+
+                if (error) throw error;
+
+                allGenres = data || [];
+                renderGenreSelect();
+                renderGenreList();
+            } catch (err) {
+                console.error("Error loading genres:", err);
+                document.getElementById('genreSelect').innerHTML = '<span class="text-red-500 text-sm">Gagal memuat genre</span>';
+            }
+        }
+
+        function renderGenreSelect() {
+            const container = document.getElementById('genreSelect');
+            const selectedInput = document.getElementById('selectedGenres');
+            const currentSelected = selectedInput.value.split(',').filter(g => g.trim());
+
+            if (allGenres.length === 0) {
+                container.innerHTML = '<span class="text-slate-400 text-sm">Belum ada genre. Tambahkan di tab Genre.</span>';
+                return;
+            }
+
+            container.innerHTML = allGenres.map(g => `
+                <div class="inline-block">
+                    <input type="checkbox" id="genre-${g.id}" class="genre-checkbox hidden" value="${g.name}" 
+                        onchange="updateSelectedGenres()" ${currentSelected.includes(g.name) ? 'checked' : ''}>
+                    <label for="genre-${g.id}" class="cursor-pointer px-3 py-1.5 rounded-full border-2 border-slate-200 text-slate-600 text-sm font-medium hover:border-indigo-400 transition inline-block">
+                        ${g.name}
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        function updateSelectedGenres() {
+            const checkboxes = document.querySelectorAll('.genre-checkbox:checked');
+            const selected = Array.from(checkboxes).map(cb => cb.value);
+            document.getElementById('selectedGenres').value = selected.join(', ');
+        }
+
+        function setSelectedGenres(genreString) {
+            const genres = genreString ? genreString.split(',').map(g => g.trim()) : [];
+            document.querySelectorAll('.genre-checkbox').forEach(cb => {
+                cb.checked = genres.includes(cb.value);
+            });
+            document.getElementById('selectedGenres').value = genreString || '';
+        }
+
+        // Genre CRUD
+        function renderGenreList() {
+            const container = document.getElementById('genreList');
+            document.getElementById('genreCount').textContent = `${allGenres.length} Genre`;
+
+            if (allGenres.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-slate-400">
+                        <i class="fas fa-tags text-4xl mb-4"></i>
+                        <p>Belum ada genre. Tambahkan yang pertama!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="flex flex-wrap gap-3">
+                    ${allGenres.map(g => `
+                        <div class="group relative bg-slate-100 hover:bg-indigo-100 rounded-xl px-4 py-3 transition">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-tag text-indigo-500"></i>
+                                <div>
+                                    <span class="font-medium text-slate-800">${g.name}</span>
+                                    <span class="text-xs text-slate-400 block">${g.slug}</span>
+                                </div>
+                                <div class="flex gap-1 ml-2 opacity-0 group-hover:opacity-100 transition">
+                                    <button onclick="editGenre('${g.id}')" class="p-1.5 text-green-600 hover:bg-green-100 rounded-lg transition" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="deleteGenre('${g.id}')" class="p-1.5 text-red-600 hover:bg-red-100 rounded-lg transition" title="Hapus">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function addGenre() {
+            const name = document.getElementById('genreName').value.trim();
+            const slug = document.getElementById('genreSlug').value.trim();
+
+            if (!name) {
+                alert('Nama genre harus diisi');
+                return;
+            }
+
+            try {
+                const { error } = await supabase.from('genres').insert({
+                    name,
+                    slug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+                });
+
+                if (error) throw error;
+
+                alert('Genre berhasil ditambahkan!');
+                document.getElementById('genreName').value = '';
+                document.getElementById('genreSlug').value = '';
+                loadGenresForSelect();
+            } catch (err) {
+                alert('Gagal menambahkan genre: ' + err.message);
+            }
+        }
+
+        async function editGenre(id) {
+            const genre = allGenres.find(g => g.id === id);
+            if (!genre) return;
+
+            document.getElementById('editGenreId').value = id;
+            document.getElementById('genreName').value = genre.name;
+            document.getElementById('genreSlug').value = genre.slug;
+
+            document.getElementById('genreFormHeader').classList.remove('bg-purple-600');
+            document.getElementById('genreFormHeader').classList.add('bg-green-600');
+            document.getElementById('genreFormTitle').innerHTML = '<i class="fas fa-edit mr-2"></i> Edit Genre';
+            document.getElementById('addGenreButtonWrapper').classList.add('hidden');
+            document.getElementById('editGenreButtonWrapper').classList.remove('hidden');
+        }
+
+        async function updateGenre() {
+            const id = document.getElementById('editGenreId').value;
+            const name = document.getElementById('genreName').value.trim();
+            const slug = document.getElementById('genreSlug').value.trim();
+
+            if (!name) {
+                alert('Nama genre harus diisi');
+                return;
+            }
+
+            try {
+                const { error } = await supabase.from('genres').update({ name, slug }).eq('id', id);
+                if (error) throw error;
+
+                alert('Genre berhasil diupdate!');
+                cancelEditGenre();
+                loadGenresForSelect();
+            } catch (err) {
+                alert('Gagal mengupdate genre: ' + err.message);
+            }
+        }
+
+        function cancelEditGenre() {
+            document.getElementById('editGenreId').value = '';
+            document.getElementById('genreName').value = '';
+            document.getElementById('genreSlug').value = '';
+
+            document.getElementById('genreFormHeader').classList.add('bg-purple-600');
+            document.getElementById('genreFormHeader').classList.remove('bg-green-600');
+            document.getElementById('genreFormTitle').innerHTML = '<i class="fas fa-plus-circle mr-2"></i> Tambah Genre Baru';
+            document.getElementById('addGenreButtonWrapper').classList.remove('hidden');
+            document.getElementById('editGenreButtonWrapper').classList.add('hidden');
+        }
+
+        async function deleteGenre(id) {
+            if (!confirm('Hapus genre ini?')) return;
+
+            try {
+                const { error } = await supabase.from('genres').delete().eq('id', id);
+                if (error) throw error;
+
+                alert('Genre berhasil dihapus');
+                loadGenresForSelect();
+            } catch (err) {
+                alert('Gagal menghapus genre: ' + err.message);
+            }
+        }
+
+        // Novel functions
         async function loadNovels() {
             try {
                 const { data, error } = await supabase.from("novels").select("*").order('created_at', { ascending: false });
@@ -245,16 +547,14 @@
                 const { data, error } = await supabase.from("novels").select("*").eq("id", id).single();
                 if (error) throw error;
 
-                // Fill form with novel data
                 document.getElementById('editNovelId').value = data.id;
                 document.getElementById('title').value = data.title || '';
                 document.getElementById('author').value = data.author || '';
-                document.getElementById('genre').value = data.genre || '';
+                setSelectedGenres(data.genre || '');
                 document.getElementById('year').value = data.year || '';
                 document.getElementById('status').value = data.status || '';
                 document.getElementById('desc').value = data.description || '';
 
-                // Show current cover
                 const preview = document.getElementById('preview');
                 const uploadText = document.getElementById('uploadText');
                 if (data.cover_url) {
@@ -263,14 +563,12 @@
                     uploadText.classList.add('hidden');
                 }
 
-                // Change form to edit mode
                 document.getElementById('formHeader').classList.remove('bg-indigo-600');
                 document.getElementById('formHeader').classList.add('bg-green-600');
                 document.getElementById('formTitle').innerHTML = '<i class="fas fa-edit mr-2"></i> Edit Novel';
                 document.getElementById('addButtonWrapper').classList.add('hidden');
                 document.getElementById('editButtonWrapper').classList.remove('hidden');
 
-                // Scroll to form
                 document.getElementById('formHeader').scrollIntoView({ behavior: 'smooth' });
 
             } catch (err) {
@@ -287,7 +585,7 @@
 
             const title = document.getElementById('title').value.trim();
             const author = document.getElementById('author').value.trim();
-            const genre = document.getElementById('genre').value.trim();
+            const genre = document.getElementById('selectedGenres').value.trim();
             const year = document.getElementById('year').value ? parseInt(document.getElementById('year').value) : null;
             const status = document.getElementById('status').value;
             const description = document.getElementById('desc').value.trim();
@@ -299,17 +597,8 @@
             }
 
             try {
-                // Prepare update payload
-                const updatePayload = {
-                    title,
-                    author,
-                    genre,
-                    year,
-                    status,
-                    description
-                };
+                const updatePayload = { title, author, genre, year, status, description };
 
-                // Upload new cover if selected
                 if (coverFile) {
                     const ext = (coverFile.name.split('.').pop() || 'jpg').toLowerCase();
                     const filePath = `covers/${novelId}/${Date.now()}.${ext}`;
@@ -324,7 +613,6 @@
                     updatePayload.cover_url = urlData?.publicUrl || null;
                 }
 
-                // Update novel
                 const { error } = await supabase.from("novels").update(updatePayload).eq("id", novelId);
                 if (error) throw error;
 
@@ -339,24 +627,21 @@
         }
 
         function cancelEdit() {
-            // Clear form
             document.getElementById('editNovelId').value = '';
             document.getElementById('title').value = '';
             document.getElementById('author').value = '';
-            document.getElementById('genre').value = '';
+            setSelectedGenres('');
             document.getElementById('year').value = '';
             document.getElementById('status').value = '';
             document.getElementById('desc').value = '';
             document.getElementById('cover').value = '';
 
-            // Reset preview
             const preview = document.getElementById('preview');
             const uploadText = document.getElementById('uploadText');
             preview.classList.add('hidden');
             preview.src = '';
             uploadText.classList.remove('hidden');
 
-            // Change back to add mode
             document.getElementById('formHeader').classList.add('bg-indigo-600');
             document.getElementById('formHeader').classList.remove('bg-green-600');
             document.getElementById('formTitle').innerHTML = '<i class="fas fa-plus-circle mr-2"></i> Tambah Novel Baru';
@@ -387,11 +672,12 @@
             location.href = "login.html";
         }
 
-        // Auth check
+        // Auth check & init
         supabase.auth.getUser().then(({ data }) => {
             if (!data.user) {
                 location.href = "login.html";
             } else {
+                loadGenresForSelect();
                 loadNovels();
             }
         });

@@ -4,6 +4,8 @@
   2) Upload cover to covers/{novelId}/... so files are organized
   3) Update novel row with cover_url
   Includes validation, error handling, and uses supabase.auth.getUser()
+  
+  Updated: Uses selectedGenres hidden input for multi-select genres
 */
 
 async function addNovel() {
@@ -11,7 +13,7 @@ async function addNovel() {
   const titleEl = document.getElementById('title');
   const descEl = document.getElementById('desc');
   const authorEl = document.getElementById('author');
-  const genreEl = document.getElementById('genre');
+  const genreEl = document.getElementById('selectedGenres'); // Changed to hidden input for multi-select
   const yearEl = document.getElementById('year');
   const statusEl = document.getElementById('status');
 
@@ -99,9 +101,17 @@ async function addNovel() {
     if (statusEl) statusEl.value = '';
     if (coverEl) coverEl.value = '';
 
+    // Clear genre checkboxes
+    document.querySelectorAll('.genre-checkbox').forEach(cb => cb.checked = false);
+
     // Hide preview
     const preview = document.getElementById('preview');
-    if (preview) preview.classList.add('hidden');
+    const uploadText = document.getElementById('uploadText');
+    if (preview) {
+      preview.classList.add('hidden');
+      preview.src = '';
+    }
+    if (uploadText) uploadText.classList.remove('hidden');
 
     // Reload novels list
     if (typeof loadNovels === 'function') {

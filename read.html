@@ -1,32 +1,611 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
+
 <head>
-<meta charset="UTF-8">
-<title>Baca</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baca - Unknown Novel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&family=Lora:wght@400;500;600&family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    /* Font families */
+    .font-inter {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .font-merriweather {
+      font-family: 'Merriweather', serif;
+    }
+
+    .font-lora {
+      font-family: 'Lora', serif;
+    }
+
+    .font-roboto {
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .font-opensans {
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    /* Settings panel animation */
+    .settings-panel {
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .settings-panel.open {
+      transform: translateX(0);
+    }
+
+    /* Chapter list panel animation */
+    .chapter-panel {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+
+    .chapter-panel.open {
+      transform: translateX(0);
+    }
+
+    /* Overlay */
+    .panel-overlay {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .panel-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Reading content styles */
+    #reading-content {
+      transition: font-size 0.2s ease, font-family 0.2s ease;
+    }
+
+    #reading-content p {
+      margin-bottom: 1.5em;
+      text-align: justify;
+    }
+
+    /* Floating buttons */
+    .floating-btn {
+      transition: all 0.2s ease;
+    }
+
+    .floating-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .floating-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Progress bar */
+    #progress-bar {
+      transition: width 0.1s ease;
+    }
+
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
 </head>
-<body>
 
-<div id="content"></div>
+<body class="bg-slate-50 dark:bg-slate-900 min-h-screen transition-colors">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/supabase.js"></script>
-<script>
-const id = new URLSearchParams(location.search).get("id");
+  <!-- Progress Bar -->
+  <div class="fixed top-0 left-0 right-0 h-1 bg-slate-200 dark:bg-slate-800 z-[60]">
+    <div id="progress-bar" class="h-full gradient-bg w-0"></div>
+  </div>
 
-async function load() {
-  const { data } = await supabase
-    .from("chapters")
-    .select("*")
-    .eq("id", id)
-    .single();
+  <!-- Header -->
+  <header
+    class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-100 dark:border-slate-700">
+    <div class="max-w-4xl mx-auto px-4 h-14 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <button onclick="openChapterPanel()"
+          class="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition"
+          title="Daftar Chapter">
+          <i class="fas fa-list text-lg"></i>
+        </button>
+        <a href="#" id="backToNovel"
+          class="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+          <i class="fas fa-arrow-left"></i>
+          <span class="hidden sm:inline text-sm font-medium truncate max-w-[200px]" id="novelTitle">Novel</span>
+        </a>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="openSettings()"
+          class="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition"
+          title="Pengaturan">
+          <i class="fas fa-cog text-lg"></i>
+        </button>
+      </div>
+    </div>
+  </header>
 
-  document.getElementById("content").innerHTML = `
-    <h2>${data.title}</h2>
-    ${data.illustration_url ? `<img src="${data.illustration_url}" width="100%">` : ""}
-    <p style="white-space:pre-line">${data.content}</p>
-  `;
-}
-load();
-</script>
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Chapter Title -->
+    <div class="text-center mb-8">
+      <span class="text-sm text-indigo-600 dark:text-indigo-400 font-medium" id="chapterNumber">Chapter 1</span>
+      <h1 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white mt-2" id="chapterTitle">Loading...</h1>
+    </div>
+
+    <!-- Illustration -->
+    <div id="illustrationContainer" class="hidden mb-8">
+      <img id="illustration" class="w-full max-w-2xl mx-auto rounded-xl shadow-lg" alt="Illustration">
+    </div>
+
+    <!-- Reading Content -->
+    <article id="reading-content"
+      class="prose prose-slate dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed font-inter">
+      <div class="text-center py-12">
+        <i class="fas fa-spinner fa-spin text-3xl text-slate-400 dark:text-slate-600"></i>
+        <p class="text-slate-500 dark:text-slate-400 mt-4">Memuat konten...</p>
+      </div>
+    </article>
+
+    <!-- Chapter Navigation -->
+    <div class="flex items-center justify-between mt-12 py-6 border-t border-slate-200 dark:border-slate-700">
+      <button id="prevChapter" onclick="goToPrevChapter()"
+        class="flex items-center gap-2 px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-indigo-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled>
+        <i class="fas fa-chevron-left"></i>
+        <span class="hidden sm:inline">Sebelumnya</span>
+      </button>
+      <button onclick="openChapterPanel()"
+        class="flex items-center gap-2 px-4 py-3 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition">
+        <i class="fas fa-list"></i>
+        <span class="hidden sm:inline">Daftar Chapter</span>
+      </button>
+      <button id="nextChapter" onclick="goToNextChapter()"
+        class="flex items-center gap-2 px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-indigo-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled>
+        <span class="hidden sm:inline">Selanjutnya</span>
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </main>
+
+  <!-- Floating Navigation Buttons (Mobile) -->
+  <div class="fixed bottom-6 left-4 right-4 flex justify-between items-center pointer-events-none z-40 md:hidden">
+    <button id="prevChapterFloat" onclick="goToPrevChapter()"
+      class="floating-btn w-12 h-12 bg-white dark:bg-slate-800 shadow-lg rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 pointer-events-auto disabled:opacity-50"
+      disabled>
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <button id="nextChapterFloat" onclick="goToNextChapter()"
+      class="floating-btn w-12 h-12 bg-white dark:bg-slate-800 shadow-lg rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 pointer-events-auto disabled:opacity-50"
+      disabled>
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+
+  <!-- Overlay -->
+  <div id="panelOverlay" class="panel-overlay fixed inset-0 bg-black/50 z-[70]" onclick="closeAllPanels()"></div>
+
+  <!-- Settings Panel -->
+  <div id="settingsPanel"
+    class="settings-panel fixed top-0 right-0 bottom-0 w-80 max-w-full bg-white dark:bg-slate-800 shadow-2xl z-[80] overflow-y-auto">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+          <i class="fas fa-cog text-indigo-600 dark:text-indigo-400"></i> Pengaturan
+        </h2>
+        <button onclick="closeSettings()"
+          class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- Dark Mode Toggle -->
+      <div class="mb-8">
+        <h3 class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Mode Tampilan
+        </h3>
+        <div class="flex gap-2">
+          <button onclick="setTheme('light')" id="themeLightBtn"
+            class="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-indigo-400 transition">
+            <i class="fas fa-sun"></i> Terang
+          </button>
+          <button onclick="setTheme('dark')" id="themeDarkBtn"
+            class="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-indigo-400 transition">
+            <i class="fas fa-moon"></i> Gelap
+          </button>
+        </div>
+      </div>
+
+      <!-- Font Family -->
+      <div class="mb-8">
+        <h3 class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Jenis Font</h3>
+        <div class="grid grid-cols-1 gap-2">
+          <button onclick="setFont('inter')"
+            class="font-btn p-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 text-left hover:border-indigo-400 transition"
+            data-font="inter">
+            <span class="font-inter text-slate-700 dark:text-white">Inter (Default)</span>
+          </button>
+          <button onclick="setFont('merriweather')"
+            class="font-btn p-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 text-left hover:border-indigo-400 transition"
+            data-font="merriweather">
+            <span class="font-merriweather text-slate-700 dark:text-white">Merriweather</span>
+          </button>
+          <button onclick="setFont('lora')"
+            class="font-btn p-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 text-left hover:border-indigo-400 transition"
+            data-font="lora">
+            <span class="font-lora text-slate-700 dark:text-white">Lora</span>
+          </button>
+          <button onclick="setFont('roboto')"
+            class="font-btn p-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 text-left hover:border-indigo-400 transition"
+            data-font="roboto">
+            <span class="font-roboto text-slate-700 dark:text-white">Roboto</span>
+          </button>
+          <button onclick="setFont('opensans')"
+            class="font-btn p-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 text-left hover:border-indigo-400 transition"
+            data-font="opensans">
+            <span class="font-opensans text-slate-700 dark:text-white">Open Sans</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Font Size -->
+      <div class="mb-8">
+        <h3 class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Ukuran Font
+        </h3>
+        <div class="flex items-center gap-4">
+          <button onclick="decreaseFontSize()"
+            class="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-indigo-100 dark:hover:bg-slate-600 transition">
+            <i class="fas fa-minus"></i>
+          </button>
+          <div class="flex-1 text-center">
+            <span id="fontSizeDisplay" class="text-2xl font-bold text-slate-800 dark:text-white">18</span>
+            <span class="text-slate-400 text-sm">px</span>
+          </div>
+          <button onclick="increaseFontSize()"
+            class="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-indigo-100 dark:hover:bg-slate-600 transition">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+        <input type="range" id="fontSizeSlider" min="14" max="28" value="18" class="w-full mt-4 accent-indigo-600"
+          oninput="setFontSize(this.value)">
+      </div>
+
+      <!-- Reset Settings -->
+      <button onclick="resetSettings()"
+        class="w-full p-3 border-2 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+        <i class="fas fa-redo mr-2"></i> Reset ke Default
+      </button>
+    </div>
+  </div>
+
+  <!-- Chapter List Panel -->
+  <div id="chapterPanel"
+    class="chapter-panel fixed top-0 left-0 bottom-0 w-80 max-w-full bg-white dark:bg-slate-800 shadow-2xl z-[80] overflow-y-auto">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+          <i class="fas fa-list text-indigo-600 dark:text-indigo-400"></i> Daftar Chapter
+        </h2>
+        <button onclick="closeChapterPanel()"
+          class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div id="chapterListPanel" class="space-y-2">
+        <p class="text-slate-400 text-center py-4">Memuat...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase.js"></script>
+
+  <script>
+    // State
+    let currentChapter = null;
+    let allChapters = [];
+    let currentChapterIndex = -1;
+    let novelData = null;
+
+    // Settings defaults
+    const defaultSettings = {
+      fontSize: 18,
+      fontFamily: 'inter',
+      darkMode: false
+    };
+
+    // Get chapter ID from URL
+    const chapterId = new URLSearchParams(location.search).get("id");
+
+    // Initialize
+    async function init() {
+      loadSettings();
+      await loadChapter();
+      updateProgressBar();
+    }
+
+    // Load chapter content
+    async function loadChapter() {
+      if (!chapterId) {
+        showError("Chapter tidak ditemukan");
+        return;
+      }
+
+      try {
+        // Load chapter
+        const { data: chapter, error: chapterError } = await supabase
+          .from("chapters")
+          .select("*")
+          .eq("id", chapterId)
+          .single();
+
+        if (chapterError || !chapter) {
+          showError("Chapter tidak ditemukan");
+          return;
+        }
+
+        currentChapter = chapter;
+
+        // Load novel info
+        const { data: novel } = await supabase
+          .from("novels")
+          .select("*")
+          .eq("id", chapter.novel_id)
+          .single();
+
+        novelData = novel;
+
+        // Load all chapters for navigation
+        const { data: chapters } = await supabase
+          .from("chapters")
+          .select("*")
+          .eq("novel_id", chapter.novel_id)
+          .order("chapter_number", { ascending: true });
+
+        allChapters = chapters || [];
+        currentChapterIndex = allChapters.findIndex(c => c.id === chapterId);
+
+        // Update UI
+        document.title = `${chapter.title} - ${novel?.title || 'Unknown Novel'}`;
+        document.getElementById("chapterNumber").textContent = `Chapter ${chapter.chapter_number || currentChapterIndex + 1}`;
+        document.getElementById("chapterTitle").textContent = chapter.title;
+        document.getElementById("novelTitle").textContent = novel?.title || 'Novel';
+        document.getElementById("backToNovel").href = `novel.html?id=${chapter.novel_id}`;
+
+        // Illustration
+        if (chapter.illustration_url) {
+          document.getElementById("illustrationContainer").classList.remove("hidden");
+          document.getElementById("illustration").src = chapter.illustration_url;
+        }
+
+        // Content
+        const contentEl = document.getElementById("reading-content");
+        const paragraphs = chapter.content.split('\n').filter(p => p.trim());
+        contentEl.innerHTML = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
+
+        // Update navigation buttons
+        updateNavigationButtons();
+
+        // Render chapter list
+        renderChapterList();
+
+      } catch (err) {
+        console.error("Error loading chapter:", err);
+        showError("Gagal memuat chapter");
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function showError(message) {
+      document.getElementById("reading-content").innerHTML = `
+                <div class="text-center py-12">
+                    <i class="fas fa-exclamation-circle text-4xl text-red-400 mb-4"></i>
+                    <p class="text-slate-500 dark:text-slate-400">${message}</p>
+                    <a href="index.html" class="inline-block mt-4 px-6 py-2 gradient-bg text-white rounded-full font-medium">Kembali ke Beranda</a>
+                </div>
+            `;
+    }
+
+    // Navigation
+    function updateNavigationButtons() {
+      const hasPrev = currentChapterIndex > 0;
+      const hasNext = currentChapterIndex < allChapters.length - 1;
+
+      document.getElementById("prevChapter").disabled = !hasPrev;
+      document.getElementById("nextChapter").disabled = !hasNext;
+      document.getElementById("prevChapterFloat").disabled = !hasPrev;
+      document.getElementById("nextChapterFloat").disabled = !hasNext;
+    }
+
+    function goToPrevChapter() {
+      if (currentChapterIndex > 0) {
+        const prevChapter = allChapters[currentChapterIndex - 1];
+        location.href = `read.html?id=${prevChapter.id}`;
+      }
+    }
+
+    function goToNextChapter() {
+      if (currentChapterIndex < allChapters.length - 1) {
+        const nextChapter = allChapters[currentChapterIndex + 1];
+        location.href = `read.html?id=${nextChapter.id}`;
+      }
+    }
+
+    // Chapter List Panel
+    function renderChapterList() {
+      const container = document.getElementById("chapterListPanel");
+
+      if (allChapters.length === 0) {
+        container.innerHTML = '<p class="text-slate-400 text-center py-4">Tidak ada chapter</p>';
+        return;
+      }
+
+      container.innerHTML = allChapters.map((c, i) => `
+                <a href="read.html?id=${c.id}" class="block p-3 rounded-xl ${c.id === chapterId ? 'bg-indigo-100 dark:bg-indigo-900/30 border-2 border-indigo-400' : 'hover:bg-slate-100 dark:hover:bg-slate-700'} transition">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-full ${c.id === chapterId ? 'bg-indigo-600 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300'} font-bold flex items-center justify-center text-sm">
+                            ${c.chapter_number || i + 1}
+                        </span>
+                        <span class="${c.id === chapterId ? 'text-indigo-600 dark:text-indigo-400 font-semibold' : 'text-slate-700 dark:text-white'} text-sm truncate">${c.title}</span>
+                    </div>
+                </a>
+            `).join('');
+    }
+
+    function openChapterPanel() {
+      document.getElementById("chapterPanel").classList.add("open");
+      document.getElementById("panelOverlay").classList.add("open");
+    }
+
+    function closeChapterPanel() {
+      document.getElementById("chapterPanel").classList.remove("open");
+      document.getElementById("panelOverlay").classList.remove("open");
+    }
+
+    // Settings Panel
+    function openSettings() {
+      document.getElementById("settingsPanel").classList.add("open");
+      document.getElementById("panelOverlay").classList.add("open");
+      updateThemeButtons();
+      updateFontButtons();
+    }
+
+    function closeSettings() {
+      document.getElementById("settingsPanel").classList.remove("open");
+      document.getElementById("panelOverlay").classList.remove("open");
+    }
+
+    function closeAllPanels() {
+      closeSettings();
+      closeChapterPanel();
+    }
+
+    // Theme
+    function setTheme(theme) {
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('darkMode', 'true');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('darkMode', 'false');
+      }
+      updateThemeButtons();
+    }
+
+    function updateThemeButtons() {
+      const isDark = document.documentElement.classList.contains('dark');
+      document.getElementById("themeLightBtn").classList.toggle('border-indigo-500', !isDark);
+      document.getElementById("themeLightBtn").classList.toggle('bg-indigo-50', !isDark);
+      document.getElementById("themeDarkBtn").classList.toggle('border-indigo-500', isDark);
+      document.getElementById("themeDarkBtn").classList.toggle('bg-indigo-900/30', isDark);
+    }
+
+    // Font Family
+    function setFont(font) {
+      const contentEl = document.getElementById("reading-content");
+      contentEl.classList.remove('font-inter', 'font-merriweather', 'font-lora', 'font-roboto', 'font-opensans');
+      contentEl.classList.add(`font-${font}`);
+      localStorage.setItem('readerFont', font);
+      updateFontButtons();
+    }
+
+    function updateFontButtons() {
+      const currentFont = localStorage.getItem('readerFont') || 'inter';
+      document.querySelectorAll('.font-btn').forEach(btn => {
+        const isActive = btn.dataset.font === currentFont;
+        btn.classList.toggle('border-indigo-500', isActive);
+        btn.classList.toggle('bg-indigo-50', isActive);
+        btn.classList.toggle('dark:bg-indigo-900/30', isActive);
+      });
+    }
+
+    // Font Size
+    function setFontSize(size) {
+      size = Math.min(28, Math.max(14, parseInt(size)));
+      document.getElementById("reading-content").style.fontSize = size + 'px';
+      document.getElementById("fontSizeDisplay").textContent = size;
+      document.getElementById("fontSizeSlider").value = size;
+      localStorage.setItem('readerFontSize', size);
+    }
+
+    function increaseFontSize() {
+      const current = parseInt(localStorage.getItem('readerFontSize') || 18);
+      setFontSize(current + 2);
+    }
+
+    function decreaseFontSize() {
+      const current = parseInt(localStorage.getItem('readerFontSize') || 18);
+      setFontSize(current - 2);
+    }
+
+    // Load settings from localStorage
+    function loadSettings() {
+      // Dark mode
+      const isDark = localStorage.getItem('darkMode') === 'true' ||
+        (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (isDark) document.documentElement.classList.add('dark');
+
+      // Font
+      const font = localStorage.getItem('readerFont') || 'inter';
+      const contentEl = document.getElementById("reading-content");
+      contentEl.classList.add(`font-${font}`);
+
+      // Font size
+      const fontSize = parseInt(localStorage.getItem('readerFontSize') || 18);
+      contentEl.style.fontSize = fontSize + 'px';
+      document.getElementById("fontSizeDisplay").textContent = fontSize;
+      document.getElementById("fontSizeSlider").value = fontSize;
+    }
+
+    // Reset settings
+    function resetSettings() {
+      localStorage.removeItem('readerFont');
+      localStorage.removeItem('readerFontSize');
+      setFont('inter');
+      setFontSize(18);
+    }
+
+    // Progress bar
+    function updateProgressBar() {
+      window.addEventListener('scroll', () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        document.getElementById("progress-bar").style.width = scrolled + "%";
+      });
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') goToPrevChapter();
+      if (e.key === 'ArrowRight') goToNextChapter();
+      if (e.key === 'Escape') closeAllPanels();
+    });
+
+    // Initialize
+    init();
+  </script>
 </body>
+
 </html>
