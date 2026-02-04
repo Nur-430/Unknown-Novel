@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Unknown Novel</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .line-clamp-2 {
@@ -23,29 +26,37 @@
     </style>
 </head>
 
-<body class="bg-slate-50 min-h-screen font-sans">
+<body class="bg-slate-50 dark:bg-slate-900 min-h-screen font-sans transition-colors">
 
     <!-- Navigation Bar -->
-    <nav class="bg-white shadow-sm border-b border-slate-200">
+    <nav class="bg-white dark:bg-slate-800 shadow-sm border-b border-slate-200 dark:border-slate-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center">
-                    <span class="text-2xl font-bold text-indigo-600"><i class="fas fa-book-open mr-2"></i>Admin
+                    <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400"><i
+                            class="fas fa-book-open mr-2"></i>Admin
                         Panel</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <!-- Tab Navigation -->
                     <button onclick="switchTab('novels')" id="tabNovels"
-                        class="tab-btn px-4 py-2 rounded-lg bg-indigo-100 text-indigo-600 font-medium text-sm transition">
+                        class="tab-btn px-4 py-2 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 font-medium text-sm transition">
                         <i class="fas fa-book mr-1"></i> Novel
                     </button>
                     <button onclick="switchTab('genres')" id="tabGenres"
-                        class="tab-btn px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium text-sm transition">
+                        class="tab-btn px-4 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 font-medium text-sm transition">
                         <i class="fas fa-tags mr-1"></i> Genre
                     </button>
-                    <div class="w-px h-6 bg-slate-200 mx-2"></div>
+                    <div class="w-px h-6 bg-slate-200 dark:bg-slate-600 mx-2"></div>
+                    <!-- Dark Mode Toggle -->
+                    <button onclick="toggleDarkMode()"
+                        class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition"
+                        title="Toggle Dark Mode">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:inline"></i>
+                    </button>
                     <button onclick="logout()"
-                        class="text-slate-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition">
+                        class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition">
                         <i class="fas fa-sign-out-alt mr-1"></i> Logout
                     </button>
                 </div>
@@ -681,6 +692,20 @@
                 loadNovels();
             }
         });
+
+        // Dark mode functions
+        function initDarkMode() {
+            const isDark = localStorage.getItem('darkMode') === 'true' ||
+                (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (isDark) document.documentElement.classList.add('dark');
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+        }
+
+        initDarkMode();
     </script>
 </body>
 

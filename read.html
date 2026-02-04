@@ -76,6 +76,10 @@
     /* Reading content styles */
     #reading-content {
       transition: font-size 0.2s ease, font-family 0.2s ease;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     #reading-content p {
@@ -601,6 +605,25 @@
       if (e.key === 'ArrowLeft') goToPrevChapter();
       if (e.key === 'ArrowRight') goToNextChapter();
       if (e.key === 'Escape') closeAllPanels();
+
+      // Prevent copy shortcuts on reading content
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'a' || e.key === 'C' || e.key === 'A')) {
+        const selection = window.getSelection();
+        const readingContent = document.getElementById('reading-content');
+        if (selection && readingContent.contains(selection.anchorNode)) {
+          e.preventDefault();
+        }
+      }
+    });
+
+    // Prevent right-click on reading content
+    document.getElementById('reading-content').addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+    });
+
+    // Prevent drag on reading content
+    document.getElementById('reading-content').addEventListener('dragstart', (e) => {
+      e.preventDefault();
     });
 
     // Initialize
