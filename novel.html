@@ -1,71 +1,264 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Detail Novel</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
+  <title>Detail Novel - Unknown Novel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
 </head>
-<body class="bg-slate-50 font-sans">
-  <div class="max-w-3xl mx-auto py-10 px-4">
-    <a href="index.html" class="text-indigo-600 hover:underline text-sm mb-6 inline-block"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
-    <div id="novel-detail" class="bg-white shadow-lg rounded-xl flex flex-col md:flex-row gap-8 p-6 md:p-10 mb-8"></div>
-    <div class="bg-white shadow rounded-xl p-6 mb-8">
-      <h2 class="font-bold text-lg mb-2 text-slate-800">Sinopsis</h2>
-      <div id="novel-synopsis" class="text-slate-600 mb-3"></div>
+
+<body class="bg-slate-100 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-100">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
+      <a href="index.html"
+        class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-2">
+        <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center">
+          <i class="fas fa-book-open text-white text-lg"></i>
+        </div>
+        Unknown Novel
+      </a>
+      <a href="index.html" class="flex items-center gap-2 text-slate-600 hover:text-indigo-600 transition">
+        <i class="fas fa-arrow-left"></i>
+        <span class="hidden sm:inline">Kembali</span>
+      </a>
     </div>
-    <div class="bg-white shadow rounded-xl p-6">
-      <h2 class="font-bold text-lg mb-2 text-slate-800">Daftar Chapter</h2>
-      <ul id="chapters-list" class="divide-y divide-slate-100"></ul>
+  </header>
+
+  <main class="max-w-6xl mx-auto py-8 px-4">
+    <!-- Loading State -->
+    <div id="loading-state" class="bg-white shadow-lg rounded-2xl p-8 animate-pulse">
+      <div class="flex flex-col md:flex-row gap-8">
+        <div class="w-full md:w-64 h-80 bg-slate-200 rounded-xl"></div>
+        <div class="flex-1 space-y-4">
+          <div class="h-8 bg-slate-200 rounded w-3/4"></div>
+          <div class="h-4 bg-slate-200 rounded w-1/2"></div>
+          <div class="h-4 bg-slate-200 rounded w-1/3"></div>
+        </div>
+      </div>
     </div>
-  </div>
+
+    <!-- Novel Detail Container -->
+    <div id="novel-container" class="hidden">
+      <!-- Novel Info Card -->
+      <div class="bg-white shadow-lg rounded-2xl overflow-hidden mb-6">
+        <div id="novel-detail" class="flex flex-col md:flex-row gap-6 p-6 md:p-8"></div>
+      </div>
+
+      <!-- Synopsis Card -->
+      <div class="bg-white shadow-lg rounded-2xl p-6 md:p-8 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-1.5 h-8 gradient-bg rounded-full"></div>
+          <h2 class="font-bold text-xl text-slate-800">Sinopsis</h2>
+        </div>
+        <div id="novel-synopsis" class="text-slate-600 leading-relaxed whitespace-pre-line"></div>
+      </div>
+
+      <!-- Chapters Card -->
+      <div class="bg-white shadow-lg rounded-2xl p-6 md:p-8">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <div class="w-1.5 h-8 gradient-bg rounded-full"></div>
+            <h2 class="font-bold text-xl text-slate-800">Daftar Chapter</h2>
+          </div>
+          <span id="chapter-count" class="text-sm text-slate-500"></span>
+        </div>
+        <ul id="chapters-list" class="space-y-2"></ul>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-state" class="hidden bg-white shadow-lg rounded-2xl p-12 text-center">
+      <i class="fas fa-exclamation-circle text-5xl text-red-400 mb-4"></i>
+      <h2 class="text-xl font-bold text-slate-800 mb-2">Novel Tidak Ditemukan</h2>
+      <p class="text-slate-500 mb-6">Novel yang Anda cari tidak ada atau telah dihapus.</p>
+      <a href="index.html"
+        class="inline-flex items-center gap-2 gradient-bg text-white px-6 py-3 rounded-full font-semibold hover:opacity-90 transition">
+        <i class="fas fa-home"></i> Kembali ke Beranda
+      </a>
+    </div>
+  </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/js/supabase.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/js/all.min.js"></script>
   <script>
-    const id = new URLSearchParams(location.search).get("id");
-    async function load() {
-      const { data: novel } = await supabase
-        .from("novels")
-        .select("*")
-        .eq("id", id)
-        .single();
-      const { data: chapters } = await supabase
-        .from("chapters")
-        .select("*")
-        .eq("novel_id", id)
-        .order("chapter_order");
-      // Card detail layout
-      document.getElementById("novel-detail").innerHTML = `
-        <div class='w-full md:w-56 flex-shrink-0'>
-          <img src="${novel.cover_url || 'https://via.placeholder.com/200x280?text=No+Cover'}" alt="${novel.title}" class="rounded-xl shadow object-cover w-full h-80 md:w-56 md:h-80 bg-slate-200">
-        </div>
-        <div class="flex-1 flex flex-col gap-2">
-          <h1 class="font-bold text-2xl text-slate-800 mb-1">${novel.title}</h1>
-          <div class="text-slate-500 text-sm">
-            <span class="inline-block mr-3"><b>Genre:</b> ${novel.genre||'-'}</span>
-            <span class="inline-block mr-3"><b>Author:</b> ${novel.author||'-'}</span>
+    const novelId = new URLSearchParams(location.search).get("id");
+
+    async function loadNovelDetail() {
+      if (!novelId) {
+        showError();
+        return;
+      }
+
+      try {
+        // Fetch novel data
+        const { data: novel, error: novelError } = await supabase
+          .from("novels")
+          .select("*")
+          .eq("id", novelId)
+          .single();
+
+        if (novelError || !novel) {
+          showError();
+          return;
+        }
+
+        // Fetch chapters
+        const { data: chapters, error: chaptersError } = await supabase
+          .from("chapters")
+          .select("*")
+          .eq("novel_id", novelId)
+          .order("chapter_number", { ascending: true });
+
+        // Update page title
+        document.title = `${novel.title} - Unknown Novel`;
+
+        // Hide loading, show content
+        document.getElementById("loading-state").classList.add("hidden");
+        document.getElementById("novel-container").classList.remove("hidden");
+
+        // Render novel detail
+        document.getElementById("novel-detail").innerHTML = `
+          <!-- Cover Image -->
+          <div class="w-full md:w-64 flex-shrink-0">
+            <div class="relative aspect-[3/4] md:aspect-auto md:h-96 rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-indigo-100 to-purple-100">
+              ${novel.cover_url
+            ? `<img src="${novel.cover_url}" alt="${novel.title}" class="w-full h-full object-cover" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full\\'><i class=\\'fas fa-book-open text-6xl text-indigo-300\\'></i></div>';">`
+            : `<div class="flex items-center justify-center h-full"><i class="fas fa-book-open text-6xl text-indigo-300"></i></div>`
+          }
+            </div>
           </div>
-          <div class="text-slate-500 text-sm">
-            <span class="inline-block mr-3"><b>Tahun:</b> ${novel.year||'-'}</span>
-            <span class="inline-block"><b>Status:</b> <span class="font-bold ${novel.status==='Ongoing'?'text-green-600':'text-red-500'}">${novel.status||'-'}</span></span>
+
+          <!-- Novel Information -->
+          <div class="flex-1 flex flex-col">
+            <h1 class="font-extrabold text-2xl md:text-3xl text-slate-800 mb-4">${novel.title}</h1>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="bg-slate-50 rounded-xl p-4">
+                <div class="text-slate-400 text-xs uppercase tracking-wider mb-1">Author</div>
+                <div class="font-semibold text-slate-700">${novel.author || 'Tidak diketahui'}</div>
+              </div>
+              <div class="bg-slate-50 rounded-xl p-4">
+                <div class="text-slate-400 text-xs uppercase tracking-wider mb-1">Genre</div>
+                <div class="font-semibold text-slate-700">${novel.genre || 'Tidak ada'}</div>
+              </div>
+              <div class="bg-slate-50 rounded-xl p-4">
+                <div class="text-slate-400 text-xs uppercase tracking-wider mb-1">Tahun Rilis</div>
+                <div class="font-semibold text-slate-700">${novel.year || '-'}</div>
+              </div>
+              <div class="bg-slate-50 rounded-xl p-4">
+                <div class="text-slate-400 text-xs uppercase tracking-wider mb-1">Status</div>
+                <div class="font-semibold ${novel.status === 'Ongoing' ? 'text-green-600' : novel.status === 'Completed' ? 'text-blue-600' : 'text-slate-700'}">
+                  ${novel.status || 'Tidak diketahui'}
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="flex items-center gap-4 text-sm text-slate-500 mt-auto">
+              <span class="flex items-center gap-2">
+                <i class="fas fa-book-open text-indigo-500"></i>
+                ${chapters?.length || 0} Chapter
+              </span>
+              <span class="flex items-center gap-2">
+                <i class="fas fa-clock text-indigo-500"></i>
+                ${formatDate(novel.created_at)}
+              </span>
+            </div>
+
+            <!-- Read Button -->
+            ${chapters && chapters.length > 0 ? `
+              <a href="read.html?id=${chapters[0].id}" class="mt-6 inline-flex items-center justify-center gap-2 gradient-bg text-white px-8 py-3 rounded-full font-semibold hover:opacity-90 transition shadow-lg shadow-indigo-500/25">
+                <i class="fas fa-book-reader"></i> Mulai Baca
+              </a>
+            ` : ''}
           </div>
-        </div>
-      `;
-      // Sinopsis
-      document.getElementById('novel-synopsis').innerText = novel.description||'-';
-      // Chapter list
-      document.getElementById('chapters-list').innerHTML =
-        (chapters&&chapters.length) ? chapters.map((c,i)=>
-          `<li class="py-3 flex justify-between items-center">
-            <span class="font-medium text-slate-700">${i+1}. <a href='read.html?id=${c.id}' class='text-indigo-600 hover:underline'>${c.title}</a></span>
-            <span class="text-xs text-slate-400">Order: ${c.chapter_order}</span>
-          </li>"
-        ).join("")
-        : '<li class="py-4 text-slate-400 text-center">Belum ada chapter.</li>';
+        `;
+
+        // Render synopsis
+        document.getElementById("novel-synopsis").innerText = novel.description || 'Tidak ada sinopsis.';
+
+        // Render chapter count
+        document.getElementById("chapter-count").innerText = `${chapters?.length || 0} Chapter`;
+
+        // Render chapters list
+        const chaptersList = document.getElementById("chapters-list");
+        if (chapters && chapters.length > 0) {
+          chaptersList.innerHTML = chapters.map((c, i) => `
+            <li>
+              <a href="read.html?id=${c.id}" class="flex items-center justify-between p-4 rounded-xl hover:bg-indigo-50 transition group">
+                <div class="flex items-center gap-4">
+                  <span class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 font-bold flex items-center justify-center text-sm group-hover:bg-indigo-600 group-hover:text-white transition">
+                    ${c.chapter_number || i + 1}
+                  </span>
+                  <div>
+                    <div class="font-medium text-slate-700 group-hover:text-indigo-600 transition">${c.title}</div>
+                    <div class="text-xs text-slate-400">${formatDate(c.created_at)}</div>
+                  </div>
+                </div>
+                <i class="fas fa-chevron-right text-slate-300 group-hover:text-indigo-600 transition"></i>
+              </a>
+            </li>
+          `).join("");
+        } else {
+          chaptersList.innerHTML = `
+            <li class="text-center py-12">
+              <i class="fas fa-book text-4xl text-slate-300 mb-4"></i>
+              <p class="text-slate-500">Belum ada chapter tersedia.</p>
+            </li>
+          `;
+        }
+
+      } catch (err) {
+        console.error("Error loading novel:", err);
+        showError();
+      }
     }
-    load();
+
+    function showError() {
+      document.getElementById("loading-state").classList.add("hidden");
+      document.getElementById("error-state").classList.remove("hidden");
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return '-';
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffTime = Math.abs(now - date);
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 0) return 'Hari ini';
+      if (diffDays === 1) return 'Kemarin';
+      if (diffDays < 7) return `${diffDays} hari lalu`;
+      if (diffDays < 30) return `${Math.floor(diffDays / 7)} minggu lalu`;
+
+      return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    loadNovelDetail();
   </script>
 </body>
+
 </html>

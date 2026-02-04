@@ -10,6 +10,10 @@ async function addNovel() {
   const coverEl = document.getElementById('cover');
   const titleEl = document.getElementById('title');
   const descEl = document.getElementById('desc');
+  const authorEl = document.getElementById('author');
+  const genreEl = document.getElementById('genre');
+  const yearEl = document.getElementById('year');
+  const statusEl = document.getElementById('status');
 
   if (typeof supabase === 'undefined') {
     alert('Supabase belum diinisialisasi');
@@ -18,6 +22,10 @@ async function addNovel() {
 
   const title = titleEl?.value?.trim() || '';
   const description = descEl?.value?.trim() || '';
+  const author = authorEl?.value?.trim() || '';
+  const genre = genreEl?.value?.trim() || '';
+  const year = yearEl?.value ? parseInt(yearEl.value) : null;
+  const status = statusEl?.value || '';
 
   if (!title) {
     alert('Judul harus diisi');
@@ -33,7 +41,14 @@ async function addNovel() {
 
   try {
     // 1) Insert novel first (cover_url null for now). Use select() to get inserted row including id.
-    const payload = { title, description };
+    const payload = {
+      title,
+      description,
+      author,
+      genre,
+      year,
+      status
+    };
     if (owner) payload.owner = owner;
 
     const { data: insertData, error: insertError } = await supabase
@@ -73,8 +88,27 @@ async function addNovel() {
       }
     }
 
-    alert('Novel ditambahkan');
-    location.reload();
+    alert('Novel berhasil ditambahkan!');
+
+    // Clear form
+    if (titleEl) titleEl.value = '';
+    if (descEl) descEl.value = '';
+    if (authorEl) authorEl.value = '';
+    if (genreEl) genreEl.value = '';
+    if (yearEl) yearEl.value = '';
+    if (statusEl) statusEl.value = '';
+    if (coverEl) coverEl.value = '';
+
+    // Hide preview
+    const preview = document.getElementById('preview');
+    if (preview) preview.classList.add('hidden');
+
+    // Reload novels list
+    if (typeof loadNovels === 'function') {
+      loadNovels();
+    } else {
+      location.reload();
+    }
   } catch (err) {
     console.error('addNovel error:', err);
     alert('Gagal menambahkan novel: ' + (err?.message || JSON.stringify(err)));
