@@ -50,7 +50,8 @@
                     <div class="w-px h-6 bg-slate-200 dark:bg-slate-600 mx-2"></div>
                     <!-- Dark Mode Toggle -->
                     <button onclick="toggleDarkMode()"
-                        class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition"
+                        class="text-slate-500 dark:text-slate-400 px-3 py-2 rounded-md text-sm font-medium transition"
+                        style="" onmouseover="this.style.color='#007ACC';" onmouseout="this.style.color='';"
                         title="Toggle Dark Mode">
                         <i class="fas fa-moon dark:hidden"></i>
                         <i class="fas fa-sun hidden dark:inline"></i>
@@ -71,8 +72,9 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Sidebar: Tambah Novel Form -->
                 <div class="lg:col-span-1">
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden sticky top-8">
-                        <div id="formHeader" class="bg-indigo-600 px-6 py-4">
+                    <div
+                        class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden sticky top-8">
+                        <div id="formHeader" style="background-color: #007ACC;" class="px-6 py-4">
                             <h3 id="formTitle" class="text-white font-semibold text-lg flex items-center">
                                 <i class="fas fa-plus-circle mr-2"></i> Tambah Novel Baru
                             </h3>
@@ -80,22 +82,24 @@
                         <div class="p-6 space-y-4">
                             <input type="hidden" id="editNovelId" value="">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Judul Novel <span
-                                        class="text-red-500">*</span></label>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Judul
+                                    Novel <span class="text-red-500">*</span></label>
                                 <input id="title" type="text" placeholder="Masukkan judul..."
-                                    class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                                    class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-slate-800 dark:text-white">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Author</label>
+                                <label
+                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Author</label>
                                 <input id="author" type="text" placeholder="Nama penulis..."
-                                    class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                                    class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-slate-800 dark:text-white">
                             </div>
 
                             <!-- Genre Multi-Select -->
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2">Genre</label>
+                                <label
+                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Genre</label>
                                 <div id="genreSelect"
-                                    class="flex flex-wrap gap-2 p-3 bg-slate-50 border border-slate-300 rounded-lg max-h-40 overflow-y-auto">
+                                    class="flex flex-wrap gap-2 p-3 bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg max-h-40 overflow-y-auto">
                                     <span class="text-slate-400 text-sm">Memuat genre...</span>
                                 </div>
                                 <input type="hidden" id="selectedGenres" value="">
@@ -103,14 +107,17 @@
 
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Tahun Rilis</label>
+                                    <label
+                                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Tahun
+                                        Rilis</label>
                                     <input id="year" type="number" placeholder="2024" min="1900" max="2100"
-                                        class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                                        class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-slate-800 dark:text-white">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Status</label>
+                                    <label
+                                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
                                     <select id="status"
-                                        class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                                        class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-slate-800 dark:text-white">
                                         <option value="">Pilih status...</option>
                                         <option value="Ongoing">Ongoing</option>
                                         <option value="Completed">Completed</option>
@@ -119,26 +126,29 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Sinopsis</label>
+                                <label
+                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Sinopsis</label>
                                 <textarea id="desc" rows="4" placeholder="Tulis sinopsis novel..."
-                                    class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition resize-none"></textarea>
+                                    class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition resize-none text-slate-800 dark:text-white"></textarea>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Cover Image</label>
-                                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-lg hover:border-indigo-400 transition cursor-pointer bg-slate-50 relative"
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Cover
+                                    Image</label>
+                                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 dark:border-slate-600 border-dashed rounded-lg hover:border-indigo-400 dark:hover:border-indigo-400 transition cursor-pointer bg-slate-50 dark:bg-slate-700 relative"
                                     style="min-height: 120px;">
                                     <div id="uploadText" class="space-y-1 text-center">
                                         <i class="fas fa-image text-slate-400 text-3xl mb-2"></i>
-                                        <div class="flex text-sm text-slate-600">
+                                        <div class="flex text-sm text-slate-600 dark:text-slate-300">
                                             <label for="cover"
-                                                class="relative cursor-pointer rounded-md font-medium text-indigo-600 hover:text-indigo-500">
+                                                class="relative cursor-pointer rounded-md font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300">
                                                 <span>Upload file</span>
                                                 <input id="cover" name="cover" type="file" accept="image/*"
                                                     class="sr-only">
                                             </label>
                                             <p class="pl-1">atau drag and drop</p>
                                         </div>
-                                        <p class="text-xs text-slate-500">PNG, JPG, GIF up to 2MB</p>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400">PNG, JPG, GIF up to 2MB
+                                        </p>
                                     </div>
                                     <img id="preview"
                                         class="absolute inset-0 w-full h-full object-cover hidden rounded-lg">
@@ -148,7 +158,10 @@
                             <!-- Action Buttons -->
                             <div id="addButtonWrapper">
                                 <button onclick="addNovel()"
-                                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition transform active:scale-95 flex justify-center items-center">
+                                    class="w-full text-white font-bold py-3 px-4 rounded-lg shadow-md transition transform active:scale-95 flex justify-center items-center"
+                                    style="background-color: #007ACC;"
+                                    onmouseover="this.style.backgroundColor='#005A9E';"
+                                    onmouseout="this.style.backgroundColor='#007ACC';">
                                     <i class="fas fa-save mr-2"></i> Simpan Novel
                                 </button>
                             </div>
@@ -168,9 +181,11 @@
 
                 <!-- Content: Daftar Novel -->
                 <div class="lg:col-span-2">
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-                            <h2 class="text-xl font-bold text-slate-800">Daftar Koleksi Novel</h2>
+                    <div
+                        class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                        <div
+                            class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-white">Daftar Koleksi Novel</h2>
                             <span id="novelCount"
                                 class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-semibold">0
                                 Novel</span>
@@ -192,8 +207,9 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Sidebar: Add/Edit Genre Form -->
                 <div class="lg:col-span-1">
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden sticky top-8">
-                        <div id="genreFormHeader" class="bg-purple-600 px-6 py-4">
+                    <div
+                        class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden sticky top-8">
+                        <div id="genreFormHeader" style="background-color: #764ba2;" class="px-6 py-4">
                             <h3 id="genreFormTitle" class="text-white font-semibold text-lg flex items-center">
                                 <i class="fas fa-plus-circle mr-2"></i> Tambah Genre Baru
                             </h3>
@@ -201,15 +217,16 @@
                         <div class="p-6 space-y-4">
                             <input type="hidden" id="editGenreId" value="">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Nama Genre <span
-                                        class="text-red-500">*</span></label>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nama
+                                    Genre <span class="text-red-500">*</span></label>
                                 <input id="genreName" type="text" placeholder="Contoh: Fantasy"
-                                    class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition">
+                                    class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition text-slate-800 dark:text-white">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Slug (URL)</label>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Slug
+                                    (URL)</label>
                                 <input id="genreSlug" type="text" placeholder="fantasy"
-                                    class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
+                                    class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition text-slate-800 dark:text-white"
                                     oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9-]/g, '-')">
                                 <p class="text-xs text-slate-400 mt-1">Huruf kecil, tanpa spasi</p>
                             </div>
@@ -237,9 +254,11 @@
 
                 <!-- Content: Genre List -->
                 <div class="lg:col-span-2">
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-                            <h2 class="text-xl font-bold text-slate-800">Daftar Genre</h2>
+                    <div
+                        class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                        <div
+                            class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-white">Daftar Genre</h2>
                             <span id="genreCount"
                                 class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-semibold">0
                                 Genre</span>
@@ -335,7 +354,7 @@
                 <div class="inline-block">
                     <input type="checkbox" id="genre-${g.id}" class="genre-checkbox hidden" value="${g.name}" 
                         onchange="updateSelectedGenres()" ${currentSelected.includes(g.name) ? 'checked' : ''}>
-                    <label for="genre-${g.id}" class="cursor-pointer px-3 py-1.5 rounded-full border-2 border-slate-200 text-slate-600 text-sm font-medium hover:border-indigo-400 transition inline-block">
+                    <label for="genre-${g.id}" class="cursor-pointer px-3 py-1.5 rounded-full border-2 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-sm font-medium hover:border-indigo-400 dark:hover:border-indigo-400 transition inline-block select-none">
                         ${g.name}
                     </label>
                 </div>
@@ -508,34 +527,34 @@
                 }
 
                 novelList.innerHTML = data.map(n => `
-                <div class="p-6 flex flex-col sm:flex-row items-start sm:items-center gap-6 hover:bg-slate-50 transition group">
-                    <div class="w-24 h-32 flex-shrink-0 bg-slate-200 rounded-lg overflow-hidden shadow-sm">
+                <div class="p-6 flex flex-col sm:flex-row items-start sm:items-center gap-6 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition group border-b border-slate-100 dark:border-slate-700 last:border-0">
+                    <div class="w-24 h-32 flex-shrink-0 bg-slate-200 dark:bg-slate-700 rounded-lg overflow-hidden shadow-sm">
                         <img src="${n.cover_url || 'https://via.placeholder.com/150x200?text=No+Cover'}" 
                              class="w-full h-full object-cover group-hover:scale-105 transition duration-300" 
                              alt="${n.title}">
                     </div>
                     <div class="flex-grow">
-                        <h4 class="text-lg font-bold text-slate-800 mb-1">${n.title}</h4>
-                        <div class="text-xs text-slate-400 mb-2 space-x-3">
+                        <h4 class="text-lg font-bold text-slate-800 dark:text-white mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">${n.title}</h4>
+                        <div class="text-xs text-slate-400 dark:text-slate-500 mb-2 space-x-3">
                             <span><i class="fas fa-user"></i> ${n.author || '-'}</span>
                             <span><i class="fas fa-tag"></i> ${n.genre || '-'}</span>
                             <span><i class="fas fa-calendar"></i> ${n.year || '-'}</span>
-                            <span class="${n.status === 'Ongoing' ? 'text-green-600' : n.status === 'Completed' ? 'text-blue-600' : 'text-slate-400'}">
+                            <span class="${n.status === 'Ongoing' ? 'text-green-600 dark:text-green-400' : n.status === 'Completed' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}">
                                 <i class="fas fa-circle text-[8px]"></i> ${n.status || '-'}
                             </span>
                         </div>
-                        <p class="text-sm text-slate-500 line-clamp-2 mb-4">${n.description || 'Tidak ada deskripsi.'}</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-4">${n.description || 'Tidak ada deskripsi.'}</p>
                         <div class="flex flex-wrap gap-2">
                             <button onclick="editNovel('${n.id}')" 
-                                class="inline-flex items-center px-4 py-2 border border-green-600 text-green-600 rounded-lg text-sm font-medium hover:bg-green-600 hover:text-white transition shadow-sm">
+                                class="inline-flex items-center px-4 py-2 border border-green-600 text-green-600 dark:text-green-400 dark:border-green-400 rounded-lg text-sm font-medium hover:bg-green-600 hover:text-white dark:hover:bg-green-500 dark:hover:text-white transition shadow-sm">
                                 <i class="fas fa-edit mr-2"></i> Edit
                             </button>
                             <button onclick="manageChapters('${n.id}')" 
-                                class="inline-flex items-center px-4 py-2 border border-indigo-600 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-600 hover:text-white transition shadow-sm">
+                                class="inline-flex items-center px-4 py-2 border border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 rounded-lg text-sm font-medium hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 dark:hover:text-white transition shadow-sm">
                                 <i class="fas fa-list-ul mr-2"></i> Chapters
                             </button>
                             <button onclick="deleteNovel('${n.id}')" 
-                                class="inline-flex items-center px-4 py-2 border border-red-200 text-red-600 rounded-lg text-sm font-medium hover:bg-red-50 transition">
+                                class="inline-flex items-center px-4 py-2 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-lg text-sm font-medium hover:bg-red-50 dark:hover:bg-red-900/30 transition">
                                 <i class="fas fa-trash-alt mr-2"></i> Hapus
                             </button>
                         </div>

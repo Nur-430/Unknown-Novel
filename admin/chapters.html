@@ -15,17 +15,18 @@
 <body class="bg-slate-50 dark:bg-slate-900 min-h-screen font-sans transition-colors">
   <nav class="bg-white dark:bg-slate-800 shadow-sm border-b border-slate-200 dark:border-slate-700 mb-4">
     <div class="max-w-4xl mx-auto px-4 flex justify-between h-16 items-center">
-      <a href="dashboard.html" class="text-indigo-600 dark:text-indigo-400 text-xl font-bold flex items-center"><i
+      <a href="dashboard.html" class="text-xl font-bold flex items-center" style="color: #007ACC;"><i
           class="fas fa-arrow-left mr-2"></i>Manajemen Chapter</a>
       <div class="flex items-center gap-2">
         <button onclick="toggleDarkMode()"
-          class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition"
-          title="Toggle Dark Mode">
+          class="text-slate-500 dark:text-slate-400 px-3 py-2 rounded-md text-sm font-medium transition"
+          onmouseover="this.style.color='#007ACC';" onmouseout="this.style.color='';" title="Toggle Dark Mode">
           <i class="fas fa-moon dark:hidden"></i>
           <i class="fas fa-sun hidden dark:inline"></i>
         </button>
         <button onclick="logout()"
-          class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition"><i
+          class="text-slate-600 dark:text-slate-300 px-3 py-2 rounded-md text-sm font-medium transition"
+          onmouseover="this.style.color='#007ACC';" onmouseout="this.style.color='';"><i
             class="fas fa-sign-out-alt mr-1"></i> Logout</button>
       </div>
     </div>
@@ -60,7 +61,9 @@
           <input type="file" id="img" class="w-full text-slate-600 dark:text-slate-400">
         </div>
         <button onclick="addChapter()"
-          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-semibold flex items-center justify-center gap-2 mt-2">
+          class="w-full text-white py-2 rounded-lg font-semibold flex items-center justify-center gap-2 mt-2"
+          style="background-color: #007ACC;" onmouseover="this.style.backgroundColor='#005A9E';"
+          onmouseout="this.style.backgroundColor='#007ACC';">
           <i class="fas fa-save"></i> Simpan Chapter
         </button>
       </div>

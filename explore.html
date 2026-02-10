@@ -16,6 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/theme.css">
     <style>
         * {
             font-family: 'Inter', sans-serif;
@@ -30,7 +31,7 @@
         }
 
         .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #007ACC 0%, #005A9E 100%);
         }
 
         .novel-card {
@@ -50,7 +51,7 @@
         }
 
         .genre-tag.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #007ACC 0%, #005A9E 100%);
             color: white;
             border-color: transparent;
         }
@@ -87,8 +88,8 @@
                     class="px-4 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
                     <i class="fas fa-home mr-2"></i>Home
                 </a>
-                <a href="explore.html"
-                    class="px-4 py-2 rounded-lg text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50 dark:bg-indigo-900/30">
+                <a href="explore.html" class="px-4 py-2 rounded-lg font-medium"
+                    style="color: #007ACC; background-color: rgba(0, 122, 204, 0.1);">
                     <i class="fas fa-compass mr-2"></i>Explore
                 </a>
                 <a href="#"
@@ -100,15 +101,17 @@
             <div class="flex items-center gap-2">
                 <!-- Dark Mode Toggle -->
                 <button onclick="toggleDarkMode()" id="darkModeBtn"
-                    class="p-2.5 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-slate-700 rounded-full transition"
-                    title="Dark Mode">
+                    class="p-2.5 text-slate-500 dark:text-slate-400 rounded-full transition"
+                    onmouseover="this.style.color='#007ACC'; this.style.backgroundColor='rgba(0, 122, 204, 0.1)';"
+                    onmouseout="this.style.color=''; this.style.backgroundColor='';" title="Dark Mode">
                     <i class="fas fa-moon text-lg dark:hidden"></i>
                     <i class="fas fa-sun text-lg hidden dark:inline"></i>
                 </button>
 
                 <!-- Login Admin -->
                 <a href="admin/login.html"
-                    class="gradient-bg hover:opacity-90 text-white px-4 py-2 rounded-full text-sm font-semibold transition shadow-lg shadow-indigo-500/25 active:scale-95 flex items-center gap-2">
+                    class="gradient-bg hover:opacity-90 text-white px-4 py-2 rounded-full text-sm font-semibold transition shadow-lg active:scale-95 flex items-center gap-2"
+                    style="box-shadow: 0 10px 25px rgba(0, 122, 204, 0.15);">
                     <i class="fas fa-user-shield"></i>
                     <span class="hidden sm:inline">Admin</span>
                 </a>
@@ -155,11 +158,11 @@
             <div class="flex items-center gap-3">
                 <div class="w-1.5 h-8 gradient-bg rounded-full"></div>
                 <h2 id="sectionTitle" class="text-xl font-bold text-slate-800 dark:text-white">Semua Novel</h2>
-                <span id="novelCount"
-                    class="bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-full text-xs font-semibold">0</span>
+                <span id="novelCount" class="px-3 py-1 rounded-full text-xs font-semibold"
+                    style="background-color: rgba(0, 122, 204, 0.1); color: #007ACC;">0</span>
             </div>
-            <button onclick="clearFilter()" id="clearFilterBtn"
-                class="hidden text-sm text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition">
+            <button onclick="clearFilter()" id="clearFilterBtn" class="hidden text-sm text-slate-500 transition"
+                onmouseover="this.style.color='#007ACC';" onmouseout="this.style.color='';">
                 <i class="fas fa-times mr-1"></i>Hapus Filter
             </button>
         </div>
@@ -208,8 +211,7 @@
             <i class="fas fa-home text-xl"></i>
             <span class="text-[10px] uppercase tracking-wider">Home</span>
         </a>
-        <a href="explore.html"
-            class="flex flex-col items-center gap-1 text-indigo-600 dark:text-indigo-400 font-semibold">
+        <a href="explore.html" class="flex flex-col items-center gap-1 font-semibold" style="color: #007ACC;">
             <i class="fas fa-compass text-xl"></i>
             <span class="text-[10px] uppercase tracking-wider">Explore</span>
         </a>

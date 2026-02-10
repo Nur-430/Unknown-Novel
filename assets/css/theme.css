@@ -1,0 +1,60 @@
+/* VS Code Blue Theme Variables */
+:root {
+  /* Primary Colors - VS Code Blue */
+  --primary: #007ACC;
+  --primary-dark: #005A9E;
+  --primary-light: #3399DD;
+  --primary-lighter: #57B3E8;
+  
+  /* Accent Colors */
+  --accent: #00D4FF;
+  --accent-cyan: #4EC9B0;
+  
+  /* Semantic Colors */
+  --success: #4EC9B0;
+  --warning: #CE9178;
+  --danger: #F48771;
+  --info: #569CD6;
+  
+  /* Gradient Backgrounds */
+  --gradient-primary: linear-gradient(135deg, #007ACC 0%, #005A9E 100%);
+  --gradient-accent: linear-gradient(135deg, #00D4FF 0%, #007ACC 100%);
+  --gradient-light: linear-gradient(135deg, #3399DD 0%, #007ACC 100%);
+}
+
+/* Utility Classes for VS Code Theme */
+.vscode-gradient {
+  background: var(--gradient-primary);
+}
+
+.vscode-gradient-accent {
+  background: var(--gradient-accent);
+}
+
+.vscode-gradient-light {
+  background: var(--gradient-light);
+}
+
+.text-vscode-primary {
+  color: var(--primary);
+}
+
+.text-vscode-light {
+  color: var(--primary-light);
+}
+
+.bg-vscode-primary {
+  background-color: var(--primary);
+}
+
+.bg-vscode-light {
+  background-color: var(--primary-light);
+}
+
+.border-vscode-primary {
+  border-color: var(--primary);
+}
+
+.hover-vscode-primary:hover {
+  background-color: var(--primary-dark);
+}

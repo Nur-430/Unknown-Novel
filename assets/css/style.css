@@ -17,7 +17,7 @@ header {
 
 main {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px,1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 15px;
   padding: 15px;
 }
@@ -38,10 +38,15 @@ main {
   display: inline-block;
   margin-top: 8px;
   padding: 6px 12px;
-  background: #7f9cf5;
-  color: #000;
+  background: #007ACC;
+  color: #fff;
   text-decoration: none;
   border-radius: 5px;
+  transition: background-color 0.2s ease;
+}
+
+.card a:hover {
+  background: #005A9E;
 }
 
 .cover {
@@ -62,8 +67,15 @@ article {
 }
 
 button {
-  background: #7f9cf5;
+  background: #007ACC;
   border: none;
   padding: 8px 15px;
   border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background: #005A9E;
 }

@@ -12,9 +12,10 @@ async function loadChapters() {
   if (error) {
     console.error("Error loading chapters:", error);
     chaptersDiv.innerHTML = `
-      <div style="color: #f87171; padding: 20px; text-align: center;">
-        <p>Gagal memuat chapters. Error: ${error.message}</p>
-        <p style="font-size: 12px; color: #888;">Pastikan tabel 'chapters' sudah dibuat di Supabase.</p>
+      <div class="p-6 text-center bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400">
+        <p class="font-medium">Gagal memuat chapters</p>
+        <p class="text-sm mt-1 mb-2">${error.message}</p>
+        <p class="text-xs opacity-75">Pastikan tabel 'chapters' sudah dibuat di Supabase.</p>
       </div>
     `;
     return;
@@ -22,7 +23,7 @@ async function loadChapters() {
 
   if (!data || data.length === 0) {
     chaptersDiv.innerHTML = `
-      <div style="color: #888; padding: 20px; text-align: center;">
+      <div class="p-6 text-center text-slate-500 dark:text-slate-400">
         <p>Belum ada chapter. Tambahkan chapter pertama!</p>
       </div>
     `;
@@ -30,11 +31,22 @@ async function loadChapters() {
   }
 
   chaptersDiv.innerHTML = data.map(c => `
-    <div style="border:1px solid #333;padding:10px;margin:8px 0;border-radius:8px;background:#1a1a1a;">
-      <b>Chapter ${c.chapter_number}: ${c.title}</b><br>
-      <div style="margin-top:8px;">
-        <button onclick="editChapter('${c.id}')" style="margin-right:5px;">Edit</button>
-        <button onclick="deleteChapter('${c.id}')" style="background:#dc2626;">Hapus</button>
+    <div class="p-4 mb-3 bg-white dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors group">
+      <div>
+        <div class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+          <span>Chapter ${c.chapter_number}: ${c.title}</span>
+        </div>
+        <div class="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2">
+           <i class="fas fa-hashtag text-slate-300 dark:text-slate-600"></i> ID: ${c.id}
+        </div>
+      </div>
+      <div class="flex items-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+        <button onclick="editChapter('${c.id}')" class="px-3 py-1.5 text-sm bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition">
+          <i class="fas fa-edit mr-1"></i> Edit
+        </button>
+        <button onclick="deleteChapter('${c.id}')" class="px-3 py-1.5 text-sm bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition">
+          <i class="fas fa-trash-alt mr-1"></i> Hapus
+        </button>
       </div>
     </div>
   `).join("");
