@@ -138,48 +138,7 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="gradient-bg py-16 px-4 text-center relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-10 left-10 w-32 h-32 bg-white rounded-full blur-3xl"></div>
-            <div class="absolute bottom-10 right-10 w-48 h-48 bg-white rounded-full blur-3xl"></div>
-        </div>
-        <div class="relative z-10">
-            <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
-                Temukan Cerita <span class="text-cyan-300">Favoritmu</span>
-            </h1>
-            <p class="text-blue-100 max-w-2xl mx-auto text-lg mb-6">
-                Baca web novel terbaru dan terpopuler dari berbagai genre secara gratis.
-            </p>
 
-            <!-- Search Bar in Hero -->
-            <div class="max-w-xl mx-auto">
-                <div class="bg-white/20 backdrop-blur-md rounded-full p-1 flex items-center">
-                    <input type="text" id="heroSearch" placeholder="Cari novel favorit..."
-                        class="flex-1 bg-transparent px-6 py-3 text-white placeholder-white/70 outline-none"
-                        onkeyup="handleHeroSearch(event)">
-                    <button onclick="searchFromHero()" class="bg-white px-6 py-3 rounded-full font-semibold transition"
-                        style="color: #007ACC;" onmouseover="this.style.backgroundColor='rgba(0, 122, 204, 0.1)';"
-                        onmouseout="this.style.backgroundColor='white';">
-                        <i class="fas fa-search mr-2"></i>Cari
-                    </button>
-                </div>
-            </div>
-
-            <div class="flex items-center justify-center gap-4 text-white/80 text-sm mt-6">
-                <span class="flex items-center gap-2">
-                    <i class="fas fa-book"></i> <span id="novelCount">0</span> Novel
-                </span>
-                <span class="w-1 h-1 bg-white/50 rounded-full"></span>
-                <span class="flex items-center gap-2">
-                    <i class="fas fa-users"></i> 1K+ Pembaca
-                </span>
-                <span class="w-1 h-1 bg-white/50 rounded-full"></span>
-                <span class="flex items-center gap-2">
-                    <i class="fas fa-star"></i> Gratis
-                </span>
-            </div>
-        </div>
-    </section>
 
     <!-- Content: Novel Grid -->
     <main class="max-w-7xl mx-auto px-4 py-10 flex-1">
@@ -447,21 +406,7 @@
             `).join('');
         }
 
-        // Hero search
-        function handleHeroSearch(event) {
-            if (event.key === 'Enter') {
-                searchFromHero();
-            }
-        }
 
-        function searchFromHero() {
-            const query = document.getElementById('heroSearch').value.trim();
-            if (query) {
-                openSearch();
-                document.getElementById('searchInput').value = query;
-                performSearch(query.toLowerCase());
-            }
-        }
 
         // Filter novels
         function filterNovels(type) {
@@ -564,7 +509,7 @@
                 }
 
                 allNovels = data || [];
-                document.getElementById('novelCount').textContent = allNovels.length;
+
                 renderNovels(allNovels);
             } catch (err) {
                 console.error("Error:", err);
