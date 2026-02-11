@@ -139,7 +139,6 @@ async function loginUser(username, password) {
             .from('profiles')
             .select('*')
             .eq('username', username)
-            .eq('role', 'reader')
             .single();
 
         if (profileError || !profile) {
@@ -296,3 +295,48 @@ async function isAuthenticated() {
     const user = await getCurrentUser();
     return user !== null;
 }
+
+/**
+ * Check authentication state and update UI accordingly
+ * @param {Object} options - Configuration options
+ * @param {boolean} options.redirectIfNotAuth - Redirect to login if not authenticated
+ * @param {string} options.redirectUrl - URL to redirect to if not authenticated
+ * @param {Function} options.onAuthSuccess - Callback when user is authenticated
+ * @param {Function} options.onAuthFail - Callback when user is not authenticated
+ */
+async function checkAuthState(options = {}) {
+    const {
+        redirectIfNotAuth = false,
+        redirectUrl = 'login.html',
+        onAuthSuccess = null,
+        onAuthFail = null
+    } = options;
+
+    const user = await getCurrentUser();
+
+    if (user && onAuthSuccess) {
+        onAuthSuccess(user);
+    } else if (!user && redirectIfNotAuth) {
+        window.location.href = redirectUrl;
+    } else if (!user && onAuthFail) {
+        onAuthFail();
+    }
+
+    return user;
+}
+
+/**
+ * Update navigation to show user is logged in
+ * @param {Object} user - User object
+ */
+function updateNavForLoggedInUser(user) {
+    // Update Akun link to point to profile instead of login
+    const akunLinks = document.querySelectorAll('a[href="login-selection.html"], a[href="admin/login.html"]');
+    akunLinks.forEach(link => {
+        // Only update if it's in bottom nav (has specific class structure)
+        if (link.querySelector('.fa-user-circle') || link.textContent.includes('Akun')) {
+            link.href = 'profile.html';
+        }
+    });
+}
+

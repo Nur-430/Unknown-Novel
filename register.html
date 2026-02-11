@@ -88,8 +88,8 @@
             </div>
 
             <!-- reCAPTCHA -->
-            <div class="flex justify-center">
-                <div class="g-recaptcha" data-sitekey="6Le6iGcsAAAAAFfj5Io5ZeR84I7X14Afl6-9D7wV"></div>
+            <div class="flex justify-center" id="captchaContainer">
+                <!-- CAPTCHA will be inserted here by JavaScript -->
             </div>
 
             <!-- Submit Button -->
@@ -126,6 +126,29 @@
         if (localStorage.getItem('darkMode') === 'true' || (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         }
+
+        // Initialize CAPTCHA based on environment
+        function initCaptcha() {
+            const hostname = window.location.hostname;
+            const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+
+            // Choose site key based on environment
+            const siteKey = isLocalhost
+                ? '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' // Test key for localhost
+                : '6Le6iGcsAAAAAFfj5Io5ZeR84I7X14Afl6-9D7wV'; // Production key
+
+            // Create CAPTCHA element
+            const captchaDiv = document.createElement('div');
+            captchaDiv.className = 'g-recaptcha';
+            captchaDiv.setAttribute('data-sitekey', siteKey);
+
+            document.getElementById('captchaContainer').appendChild(captchaDiv);
+        }
+
+        // Wait for reCAPTCHA script to load
+        window.onload = function () {
+            initCaptcha();
+        };
 
         // Toggle password visibility
         function togglePassword(fieldId) {

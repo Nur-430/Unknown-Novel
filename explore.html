@@ -232,6 +232,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/supabase.js"></script>
+    <script src="assets/js/reader-auth.js"></script>
 
     <script>
         let allNovels = [];
@@ -414,6 +415,13 @@
         checkUrlParams();
         loadGenres();
         loadNovels();
+
+        // Check auth state and update navigation
+        checkAuthState({
+            onAuthSuccess: function (user) {
+                updateNavForLoggedInUser(user);
+            }
+        });
     </script>
 </body>
 
