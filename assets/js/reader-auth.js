@@ -72,8 +72,7 @@ async function registerUser(username, password) {
             .from('profiles')
             .insert([{
                 id: authData.user.id,
-                username: username,
-                role: 'reader'
+                username: username
             }]);
 
         if (profileError) {
