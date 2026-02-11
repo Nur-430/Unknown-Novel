@@ -17,20 +17,6 @@ async function registerUser(username, password) {
             };
         }
 
-        // Check if username already exists
-        const { data: existingProfile } = await supabase
-            .from('profiles')
-            .select('username')
-            .eq('username', username)
-            .single();
-
-        if (existingProfile) {
-            return {
-                success: false,
-                error: 'Username sudah digunakan'
-            };
-        }
-
         // Create a dummy email from username for Supabase Auth
         const email = `${username}@reader.unknownnovel.local`;
 
@@ -39,6 +25,7 @@ async function registerUser(username, password) {
             email: email,
             password: password,
             options: {
+                emailRedirectTo: window.location.origin,
                 data: {
                     username: username,
                     role: 'reader'
@@ -48,9 +35,32 @@ async function registerUser(username, password) {
 
         if (authError) {
             console.error('Auth error:', authError);
+
+            // Handle specific errors
+            if (authError.message.includes('rate limit')) {
+                return {
+                    success: false,
+                    error: 'Terlalu banyak percobaan. Harap tunggu beberapa menit dan coba lagi.'
+                };
+            }
+
+            if (authError.message.includes('already registered')) {
+                return {
+                    success: false,
+                    error: 'Username sudah digunakan'
+                };
+            }
+
             return {
                 success: false,
                 error: 'Gagal membuat akun: ' + authError.message
+            };
+        }
+
+        if (!authData.user) {
+            return {
+                success: false,
+                error: 'Gagal membuat akun'
             };
         }
 
@@ -65,11 +75,19 @@ async function registerUser(username, password) {
 
         if (profileError) {
             console.error('Profile error:', profileError);
-            // Try to clean up auth user if profile creation fails
-            await supabase.auth.signOut();
+
+            // Check for unique constraint violation
+            if (profileError.code === '23505') {
+                return {
+                    success: false,
+                    error: 'Username sudah digunakan'
+                };
+            }
+
+            // Don't clean up auth user - let them try to complete profile later
             return {
                 success: false,
-                error: 'Gagal membuat profil'
+                error: 'Gagal membuat profil. Silakan hubungi administrator.'
             };
         }
 
