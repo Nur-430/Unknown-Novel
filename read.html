@@ -320,6 +320,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/js/supabase.js"></script>
+  <script src="assets/js/reader-auth.js"></script>
 
   <script>
     // State
@@ -409,6 +410,11 @@
 
         // Render chapter list
         renderChapterList();
+
+        // Save reading history (if user is logged in)
+        saveReadingHistory(chapter.novel_id, chapter.id).catch(err => {
+          console.log('Not logged in or failed to save history');
+        });
 
       } catch (err) {
         console.error("Error loading chapter:", err);

@@ -340,3 +340,256 @@ function updateNavForLoggedInUser(user) {
     });
 }
 
+// ============================================
+// BOOKMARK FUNCTIONS
+// ============================================
+
+/**
+ * Add a novel to user's bookmarks
+ * @param {string} novelId - Novel ID to bookmark
+ * @returns {Object} - { success: boolean, error?: string }
+ */
+async function addBookmark(novelId) {
+    try {
+        const user = await getCurrentUser();
+        if (!user) {
+            return { success: false, error: 'Anda harus login terlebih dahulu' };
+        }
+
+        const { error } = await supabase
+            .from('bookmarks')
+            .insert([{
+                user_id: user.id,
+                novel_id: novelId
+            }]);
+
+        if (error) {
+            // Check for duplicate
+            if (error.code === '23505') {
+                return { success: false, error: 'Novel sudah ada di bookmark' };
+            }
+            console.error('Add bookmark error:', error);
+            return { success: false, error: 'Gagal menambahkan bookmark' };
+        }
+
+        return { success: true };
+    } catch (err) {
+        console.error('Add bookmark error:', err);
+        return { success: false, error: 'Terjadi kesalahan' };
+    }
+}
+
+/**
+ * Remove a novel from user's bookmarks
+ * @param {string} novelId - Novel ID to remove
+ * @returns {Object} - { success: boolean, error?: string }
+ */
+async function removeBookmark(novelId) {
+    try {
+        const user = await getCurrentUser();
+        if (!user) {
+            return { success: false, error: 'Anda harus login terlebih dahulu' };
+        }
+
+        const { error } = await supabase
+            .from('bookmarks')
+            .delete()
+            .eq('user_id', user.id)
+            .eq('novel_id', novelId);
+
+        if (error) {
+            console.error('Remove bookmark error:', error);
+            return { success: false, error: 'Gagal menghapus bookmark' };
+        }
+
+        return { success: true };
+    } catch (err) {
+        console.error('Remove bookmark error:', err);
+        return { success: false, error: 'Terjadi kesalahan' };
+    }
+}
+
+/**
+ * Check if a novel is bookmarked by current user
+ * @param {string} novelId - Novel ID to check
+ * @returns {boolean} - True if bookmarked
+ */
+async function isBookmarked(novelId) {
+    try {
+        const user = await getCurrentUser();
+        if (!user) return false;
+
+        const { data, error } = await supabase
+            .from('bookmarks')
+            .select('id')
+            .eq('user_id', user.id)
+            .eq('novel_id', novelId)
+            .single();
+
+        return !error && data !== null;
+    } catch (err) {
+        console.error('Check bookmark error:', err);
+        return false;
+    }
+}
+
+/**
+ * Get all bookmarked novels for current user
+ * @returns {Array} - Array of bookmark objects with novel details
+ */
+async function getUserBookmarks() {
+    try {
+        const user = await getCurrentUser();
+        if (!user) return [];
+
+        const { data, error } = await supabase
+            .from('bookmarks')
+            .select(`
+                id,
+                created_at,
+                novel_id,
+                novels (
+                    id,
+                    title,
+                    author,
+                    genre,
+                    cover_url,
+                    description,
+                    status,
+                    created_at
+                )
+            `)
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Get bookmarks error:', error);
+            return [];
+        }
+
+        return data || [];
+    } catch (err) {
+        console.error('Get bookmarks error:', err);
+        return [];
+    }
+}
+
+// ============================================
+// READING HISTORY FUNCTIONS
+// ============================================
+
+/**
+ * Save reading history (chapter progress)
+ * @param {string} novelId - Novel ID
+ * @param {string} chapterId - Chapter ID
+ * @returns {Object} - { success: boolean, error?: string }
+ */
+async function saveReadingHistory(novelId, chapterId) {
+    try {
+        const user = await getCurrentUser();
+        if (!user) return { success: false, error: 'Not logged in' };
+
+        // Use upsert to update if exists
+        const { error } = await supabase
+            .from('reading_history')
+            .upsert({
+                user_id: user.id,
+                novel_id: novelId,
+                chapter_id: chapterId,
+                last_read_at: new Date().toISOString()
+            }, {
+                onConflict: 'user_id,novel_id'
+            });
+
+        if (error) {
+            console.error('Save reading history error:', error);
+            return { success: false, error: 'Gagal menyimpan riwayat' };
+        }
+
+        return { success: true };
+    } catch (err) {
+        console.error('Save reading history error:', err);
+        return { success: false, error: 'Terjadi kesalahan' };
+    }
+}
+
+/**
+ * Get reading history for current user
+ * @param {number} limit - Maximum number of items to return (default: 10)
+ * @returns {Array} - Array of reading history with novel and chapter details
+ */
+async function getReadingHistory(limit = 10) {
+    try {
+        const user = await getCurrentUser();
+        if (!user) return [];
+
+        const { data, error } = await supabase
+            .from('reading_history')
+            .select(`
+                id,
+                last_read_at,
+                novel_id,
+                chapter_id,
+                novels (
+                    id,
+                    title,
+                    cover_url,
+                    author,
+                    genre
+                ),
+                chapters (
+                    id,
+                    title,
+                    chapter_number
+                )
+            `)
+            .eq('user_id', user.id)
+            .order('last_read_at', { ascending: false })
+            .limit(limit);
+
+        if (error) {
+            console.error('Get reading history error:', error);
+            return [];
+        }
+
+        return data || [];
+    } catch (err) {
+        console.error('Get reading history error:', err);
+        return [];
+    }
+}
+
+/**
+ * Get reading progress for a specific novel
+ * @param {string} novelId - Novel ID
+ * @returns {Object|null} - Reading progress object or null
+ */
+async function getNovelProgress(novelId) {
+    try {
+        const user = await getCurrentUser();
+        if (!user) return null;
+
+        const { data, error } = await supabase
+            .from('reading_history')
+            .select(`
+                id,
+                last_read_at,
+                chapter_id,
+                chapters (
+                    id,
+                    title,
+                    chapter_number
+                )
+            `)
+            .eq('user_id', user.id)
+            .eq('novel_id', novelId)
+            .single();
+
+        if (error) return null;
+        return data;
+    } catch (err) {
+        console.error('Get novel progress error:', err);
+        return null;
+    }
+}
+
