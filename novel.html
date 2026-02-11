@@ -164,8 +164,11 @@
             </div>
           </div>
           <div class="flex-1 flex flex-col">
-            <h1 class="font-extrabold text-2xl md:text-3xl text-slate-800 dark:text-white mb-4">${novel.title}</h1>
-            <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="mb-4">
+              <h1 class="font-extrabold text-3xl md:text-4xl text-slate-800 dark:text-white mb-2">${novel.title}</h1>
+              ${novel.secondary_title ? `<h2 class="font-semibold text-2xl md:text-3xl text-slate-600 dark:text-slate-300" style="font-size: 80%; opacity: 0.9;">${novel.secondary_title}</h2>` : ''}
+            </div>
+            <div class="grid grid-cols-2 gap-3 mb-6">
               <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-4">
                 <div class="text-slate-400 dark:text-slate-500 text-xs uppercase tracking-wider mb-1">Author</div>
                 <div class="font-semibold text-slate-700 dark:text-white">${novel.author || 'Tidak diketahui'}</div>
@@ -185,12 +188,12 @@
                 </div>
               </div>
             </div>
-            <div class="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mt-auto">
+            <div class="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-6">
               <span class="flex items-center gap-2"><i class="fas fa-book-open text-indigo-500"></i> ${chapters?.length || 0} Chapter</span>
               <span class="flex items-center gap-2"><i class="fas fa-clock text-indigo-500"></i> ${formatDate(novel.created_at)}</span>
             </div>
             ${chapters && chapters.length > 0 ? `
-              <div class="mt-6 flex gap-3">
+              <div class="flex gap-3 mt-auto">
                 <a href="read.html?id=${chapters[0].id}" class="flex-1 inline-flex items-center justify-center gap-2 gradient-bg text-white px-8 py-3 rounded-full font-semibold hover:opacity-90 transition shadow-lg shadow-indigo-500/25">
                   <i class="fas fa-book-reader"></i> Mulai Baca
                 </a>

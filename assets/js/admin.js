@@ -11,6 +11,7 @@
 async function addNovel() {
   const coverEl = document.getElementById('cover');
   const titleEl = document.getElementById('title');
+  const secondaryTitleEl = document.getElementById('secondaryTitle');
   const descEl = document.getElementById('desc');
   const authorEl = document.getElementById('author');
   const genreEl = document.getElementById('selectedGenres'); // Changed to hidden input for multi-select
@@ -23,6 +24,7 @@ async function addNovel() {
   }
 
   const title = titleEl?.value?.trim() || '';
+  const secondaryTitle = secondaryTitleEl?.value?.trim() || null;
   const description = descEl?.value?.trim() || '';
   const author = authorEl?.value?.trim() || '';
   const genre = genreEl?.value?.trim() || '';
@@ -45,6 +47,7 @@ async function addNovel() {
     // 1) Insert novel first (cover_url null for now). Use select() to get inserted row including id.
     const payload = {
       title,
+      secondary_title: secondaryTitle,
       description,
       author,
       genre,
@@ -94,6 +97,7 @@ async function addNovel() {
 
     // Clear form
     if (titleEl) titleEl.value = '';
+    if (secondaryTitleEl) secondaryTitleEl.value = '';
     if (descEl) descEl.value = '';
     if (authorEl) authorEl.value = '';
     if (genreEl) genreEl.value = '';
