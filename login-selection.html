@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk atau Daftar - Unknown Novel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #007ACC 0%, #005A9E 100%);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 min-h-screen flex items-center justify-center p-4 transition-colors">
+
+    <div class="w-full max-w-sm bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 text-center space-y-6">
+
+        <!-- Logo/Icon -->
+        <div class="mx-auto w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center shadow-lg mb-6">
+            <i class="fas fa-user-circle text-white text-3xl"></i>
+        </div>
+
+        <div class="space-y-2">
+            <h1 class="text-2xl font-bold text-slate-800 dark:text-white">Selamat Datang</h1>
+            <p class="text-slate-500 dark:text-slate-400">Silakan masuk atau daftar untuk melanjutkan</p>
+        </div>
+
+        <div class="space-y-4 pt-4">
+            <!-- Tombol Daftar -->
+            <a href="register.html"
+                class="block w-full py-3.5 px-4 rounded-xl gradient-bg text-white font-semibold shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all duration-300">
+                <i class="fas fa-user-plus mr-2"></i>Daftar
+            </a>
+
+            <!-- Tombol Masuk -->
+            <a href="login.html"
+                class="block w-full py-3.5 px-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold hover:border-blue-500 hover:text-blue-600 dark:hover:border-blue-500 dark:hover:text-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                <i class="fas fa-sign-in-alt mr-2"></i>Masuk
+            </a>
+        </div>
+
+        <div class="pt-6">
+            <a href="index.html"
+                class="text-sm text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition flex items-center justify-center gap-2">
+                <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Dark Mode Init -->
+    <script>
+        // Check for dark mode preference
+        if (localStorage.getItem('darkMode') === 'true' || (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</body>
+
+</html>
