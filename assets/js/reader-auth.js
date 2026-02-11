@@ -64,6 +64,9 @@ async function registerUser(username, password) {
             };
         }
 
+        // Small delay to ensure auth user is fully created
+        await new Promise(resolve => setTimeout(resolve, 500));
+
         // Create profile entry
         const { error: profileError } = await supabase
             .from('profiles')
@@ -84,10 +87,18 @@ async function registerUser(username, password) {
                 };
             }
 
+            // Check for table not found
+            if (profileError.code === '42P01') {
+                return {
+                    success: false,
+                    error: 'Tabel profiles belum dibuat. Silakan hubungi administrator.'
+                };
+            }
+
             // Don't clean up auth user - let them try to complete profile later
             return {
                 success: false,
-                error: 'Gagal membuat profil. Silakan hubungi administrator.'
+                error: 'Gagal membuat profil. Error: ' + profileError.message
             };
         }
 
