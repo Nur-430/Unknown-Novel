@@ -1,79 +1,79 @@
 # Unknown Novel
 
-Unknown Novel adalah aplikasi web modern untuk membaca novel secara gratis. Dibangun dengan fokus pada kecepatan dan kenyamanan pengguna, aplikasi ini menggunakan arsitektur Single Page Application (SPA) untuk memberikan pengalaman navigasi yang mulus.
+Unknown Novel is a modern web application for reading novels for free. Built with a focus on speed and user convenience, this application uses a Single Page Application (SPA) architecture to provide a seamless navigation experience.
 
-## 🌟 Fitur Utama
+## 🌟 Key Features
 
-- **📖 Baca Novel**: Akses koleksi novel dari berbagai genre dengan tampilan baca yang nyaman.
-- **🔍 Pencarian Cepat**: Cari novel berdasarkan judul, penulis, atau deskripsi secara instan.
-- **🌙 Mode Gelap (Dark Mode)**: Dukungan tema gelap otomatis atau manual untuk kenyamanan mata.
-- **📱 Desain Responsif**: Tampilan yang optimal di semua perangkat (Desktop, Tablet, Ponsel).
-- **⚡ Navigasi Cepat**: Menggunakan teknik SPA (Single Page Application) untuk transisi antar halaman tanpa reload.
-- **📚 Perpustakaan**: Simpan novel favorit Anda untuk diakses kembali dengan mudah.
-- **👤 Manajemen Akun**: Fitur login dan pendaftaran untuk pembaca dan admin.
-- **🛠️ Dashboard Admin**: Panel khusus bagi administrator untuk mengelola, menambah, dan mengedit konten novel.
+- **📖 Read Novels**: Access a collection of novels from various genres with a comfortable reading interface.
+- **🔍 Quick Search**: Instantly search for novels by title, author, or description.
+- **🌙 Dark Mode**: Support for automatic or manual dark theme for eye comfort.
+- **📱 Responsive Design**: Optimal display on all devices (Desktop, Tablet, Mobile).
+- **⚡ Fast Navigation**: Uses SPA (Single Page Application) techniques for transitions between pages without reloading.
+- **📚 Library**: Save your favorite novels for easy access later.
+- **👤 Account Management**: Login and registration features for readers and admins.
+- **🛠️ Admin Dashboard**: Dedicated panel for administrators to manage, add, and edit novel content.
 
-## 🛠️ Teknologi yang Digunakan
+## 🛠️ Technologies Used
 
 - **Frontend**:
   - HTML5
   - [Tailwind CSS](https://tailwindcss.com/) (Styling)
   - JavaScript (Vanilla ES6+)
-  - Font Awesome (Ikon)
+  - Font Awesome (Icons)
   - Google Fonts (Inter)
 - **Backend & Database**:
-  - [Supabase](https://supabase.com/) (Database & Autentikasi)
+  - [Supabase](https://supabase.com/) (Database & Authentication)
 - **Runtime**:
-  - [Node.js](https://nodejs.org/) (untuk menjalankan server lokal)
+  - [Node.js](https://nodejs.org/) (to run the local server)
 
-## 📋 Prasyarat
+## 📋 Prerequisites
 
-Pastikan Anda telah menginstal software berikut di komputer Anda:
-- [Node.js](https://nodejs.org/) (v14 atau lebih baru)
-- npm (biasanya terinstal otomatis bersama Node.js)
+Make sure you have installed the following software on your computer:
+- [Node.js](https://nodejs.org/) (v14 or later)
+- npm (usually installed automatically with Node.js)
 
-## 🚀 Cara Menjalankan
+## 🚀 How to Run
 
-Ikuti langkah-langkah berikut untuk menjalankan proyek ini di komputer lokal Anda:
+Follow these steps to run this project on your local computer:
 
-1. **Clone Repositori**
+1. **Clone Repository**
    ```bash
    git clone https://github.com/username/unknown-novel.git
    cd unknown-novel
    ```
 
-2. **Instal Dependensi**
+2. **Install Dependencies**
    ```bash
    npm install
    ```
 
-3. **Konfigurasi Supabase**
-   Pastikan file konfigurasi Supabase (`assets/js/supabase.js`) telah diisi dengan URL dan Key proyek Supabase Anda yang valid.
+3. **Configure Supabase**
+   Ensure the Supabase configuration file (`assets/js/supabase.js`) is filled with your valid Supabase Project URL and Key.
 
-4. **Jalankan Server**
+4. **Run Server**
    ```bash
    npm run dev
    ```
 
-5. **Buka di Browser**
-   Buka browser dan kunjungi `http://localhost:5000`.
+5. **Open in Browser**
+   Open your browser and visit `http://localhost:5000`.
 
-## 📂 Struktur Proyek
+## 📂 Project Structure
 
 ```
 unknown-novel/
-├── 📁 admin/          # File halaman dan logika untuk Admin Dashboard
-├── 📁 assets/         # Aset statis (CSS, JS, Gambar)
-│   ├── css/           # File CSS kustom
-│   ├── js/            # Skrip JavaScript (termasuk konfigurasi Supabase)
-│   └── img/           # Gambar dan logo
-├── 📁 database/       # File terkait database (SQL dump, dll)
-├── 📁 pages/          # File HTML parsial untuk konten halaman (Home, Explore, dll)
-├── 📄 index.html      # File utama aplikasi (Shell SPA)
-├── 📄 server.js       # Server Node.js sederhana untuk menyajikan file statis
-└── 📄 package.json    # Daftar dependensi dan skrip NPM
+├── 📁 admin/          # Page files and logic for Admin Dashboard
+├── 📁 assets/         # Static assets (CSS, JS, Images)
+│   ├── css/           # Custom CSS files
+│   ├── js/            # JavaScript scripts (including Supabase config)
+│   └── img/           # Images and logos
+├── 📁 database/       # Database related files (SQL dump, etc.)
+├── 📁 pages/          # Partial HTML files for page content (Home, Explore, etc.)
+├── 📄 index.html      # Main application file (SPA Shell)
+├── 📄 server.js       # Simple Node.js server to serve static files
+└── 📄 package.json    # List of dependencies and NPM scripts
 ```
 
-## 📜 Lisensi
+## 📜 License
 
-Proyek ini didistribusikan di bawah lisensi **ISC**.
+This project is distributed under the **ISC** license.
