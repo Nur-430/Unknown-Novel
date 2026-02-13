@@ -84,35 +84,42 @@
 
             // Novel Detail
             const detailHTML = `
-            <div class="w-full md:w-64 flex-shrink-0">
+            <div class="w-32 sm:w-48 md:w-64 flex-shrink-0">
                 <img src="${novel.cover_url || 'https://via.placeholder.com/256x384'}" 
                     alt="${novel.title}"
-                    class="w-full rounded-xl shadow-lg"
+                    class="w-full rounded-xl shadow-lg aspect-[2/3] object-cover"
                     onerror="this.src='https://via.placeholder.com/256x384?text=No+Cover'">
             </div>
-            <div class="flex-1">
-                <h1 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">${novel.title}</h1>
-                <p class="text-slate-600 dark:text-slate-400 mb-4"><i class="fas fa-user mr-2"></i>${novel.author || 'Unknown'}</p>
-                ${novel.genre ? `<span class="inline-block px-3 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-sm font-medium mb-4"><i class="fas fa-tag mr-1"></i>${novel.genre}</span>` : ''}
-                <div class="flex items-center gap-4 mb-6">
-                    <span class="text-sm text-slate-600 dark:text-slate-400"><i class="fas fa-book mr-1"></i>${chapters.length} Chapter</span>
-                    <span class="text-sm text-slate-600 dark:text-slate-400"><i class="fas fa-eye mr-1"></i>${novel.views || 0} Views</span>
+            <div class="flex-1 min-w-0 flex flex-col">
+                <h1 class="text-xl md:text-3xl font-bold text-slate-800 dark:text-white mb-1 md:mb-2 leading-tight">${novel.title}</h1>
+                <p class="text-sm md:text-base text-slate-600 dark:text-slate-400 mb-3 md:mb-4 truncate"><i class="fas fa-user mr-2"></i>${novel.author || 'Unknown'}</p>
+                
+                <div class="mb-4">
+                    ${novel.genre ? `<span class="inline-block px-2 py-0.5 md:px-3 md:py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-xs md:text-sm font-medium"><i class="fas fa-tag mr-1"></i>${novel.genre}</span>` : ''}
                 </div>
-                <div class="flex gap-3">
+
+                <div class="flex items-center gap-4 mb-4 md:mb-6 mt-auto">
+                    <span class="text-xs md:text-sm text-slate-600 dark:text-slate-400"><i class="fas fa-book mr-1"></i>${chapters.length} Ch</span>
+                    <span class="text-xs md:text-sm text-slate-600 dark:text-slate-400"><i class="fas fa-eye mr-1"></i>${novel.views || 0}</span>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-2 md:gap-3 mt-2">
                     ${chapters.length > 0 ? `
                         <a href="/read?id=${chapters[0].id}" data-link
-                            class="flex-1 md:flex-none px-6 py-3 gradient-bg text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all text-center">
-                            <i class="fas fa-book-reader mr-2"></i>Mulai Baca
+                            class="flex-1 px-4 py-2 md:px-6 md:py-3 gradient-bg text-white rounded-lg md:rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all text-center text-sm md:text-base flex items-center justify-center">
+                            <i class="fas fa-book-reader mr-2"></i><span class="hidden sm:inline">Mulai </span>Baca
                         </a>
                     ` : ''}
                     <button onclick="toggleBookmark('${novel.id}')" id="bookmark-btn"
-                        class="px-6 py-3 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition">
+                        class="px-4 py-2 md:px-6 md:py-3 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg md:rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition text-sm md:text-base flex items-center justify-center">
                         <i class="fas fa-bookmark mr-2"></i>Simpan
                     </button>
                 </div>
             </div>
         `;
-            document.getElementById('novel-detail').innerHTML = detailHTML;
+            const detailContainer = document.getElementById('novel-detail');
+            detailContainer.className = "flex flex-row gap-4 md:gap-8 p-4 md:p-8"; // Enforce row layout
+            detailContainer.innerHTML = detailHTML;
 
             // Synopsis
             document.getElementById('novel-synopsis').textContent = novel.synopsis || 'Tidak ada sinopsis.';
