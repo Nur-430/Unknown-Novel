@@ -1,0 +1,198 @@
+<!-- Explore Page Content -->
+<section class="gradient-bg py-12 px-4 text-center relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-10 left-10 w-32 h-32 bg-white rounded-full blur-3xl"></div>
+        <div class="absolute bottom-10 right-10 w-48 h-48 bg-white rounded-full blur-3xl"></div>
+    </div>
+    <div class="relative z-10">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-3 leading-tight">
+            <i class="fas fa-compass mr-3"></i>Jelajahi Genre
+        </h1>
+        <p class="text-indigo-100 max-w-2xl mx-auto text-lg">
+            Temukan novel berdasarkan genre favoritmu
+        </p>
+    </div>
+</section>
+
+<section class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex items-center gap-3 mb-6">
+        <div class="w-1.5 h-8 gradient-bg rounded-full"></div>
+        <h2 class="text-xl font-bold text-slate-800 dark:text-white">Pilih Genre</h2>
+    </div>
+
+    <div id="genreTags" class="flex flex-wrap gap-3">
+        <div class="animate-pulse flex gap-3">
+            <div class="h-10 w-24 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
+            <div class="h-10 w-20 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
+            <div class="h-10 w-28 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
+        </div>
+    </div>
+</section>
+
+<main class="max-w-7xl mx-auto px-4 py-6 flex-1">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-1.5 h-8 gradient-bg rounded-full"></div>
+            <h2 id="sectionTitle" class="text-xl font-bold text-slate-800 dark:text-white">Semua Novel</h2>
+            <span id="novelCount" class="px-3 py-1 rounded-full text-xs font-semibold"
+                style="background-color: rgba(0, 122, 204, 0.1); color: #007ACC;">0</span>
+        </div>
+        <button onclick="clearFilter()" id="clearFilterBtn" class="hidden text-sm text-slate-500 transition"
+            onmouseover="this.style.color='#007ACC';" onmouseout="this.style.color='';">
+            <i class="fas fa-times mr-1"></i>Hapus Filter
+        </button>
+    </div>
+
+    <div id="novels"
+        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+        <div class="animate-pulse space-y-3">
+            <div class="bg-slate-200 dark:bg-slate-700 aspect-[3/4] rounded-xl"></div>
+            <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4"></div>
+            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
+        </div>
+    </div>
+</main>
+
+<script>
+    window.initExplorePage = function (params) {
+        let allNovels = [];
+        let allGenres = [];
+        let selectedGenre = params.get('genre') || null;
+
+        async function loadGenres() {
+            try {
+                const { data, error } = await supabase.from('genres').select('*').order('name', { ascending: true });
+                if (error) throw error;
+                allGenres = data || [];
+                renderGenreTags();
+            } catch (err) {
+                console.error('Error loading genres:', err);
+                allGenres = [
+                    { id: '1', name: 'Action', slug: 'action' },
+                    { id: '2', name: 'Adventure', slug: 'adventure' },
+                    { id: '3', name: 'Comedy', slug: 'comedy' },
+                    { id: '4', name: 'Drama', slug: 'drama' },
+                    { id: '5', name: 'Fantasy', slug: 'fantasy' },
+                    { id: '6', name: 'Romance', slug: 'romance' },
+                    { id: '7', name: 'Horror', slug: 'horror' },
+                    { id: '8', name: 'Mystery', slug: 'mystery' },
+                    { id: '9', name: 'Sci-Fi', slug: 'sci-fi' },
+                    { id: '10', name: 'Slice of Life', slug: 'slice-of-life' }
+                ];
+                renderGenreTags();
+            }
+        }
+
+        function renderGenreTags() {
+            const container = document.getElementById('genreTags');
+            if (allGenres.length === 0) {
+                container.innerHTML = '<p class="text-slate-500 dark:text-slate-400">Belum ada genre tersedia.</p>';
+                return;
+            }
+
+            container.innerHTML = `
+            <button onclick="filterByGenre(null)" class="genre-tag px-4 py-2 rounded-full border-2 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-medium hover:border-indigo-400 ${!selectedGenre ? 'active' : ''}">
+                <i class="fas fa-layer-group mr-2"></i>Semua
+            </button>
+            ${allGenres.map(g => `
+                <button onclick="filterByGenre('${g.name}')" class="genre-tag px-4 py-2 rounded-full border-2 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-medium hover:border-indigo-400 ${selectedGenre === g.name ? 'active' : ''}">
+                    ${g.name}
+                </button>
+            `).join('')}
+        `;
+        }
+
+        window.filterByGenre = function (genre) {
+            selectedGenre = genre;
+            renderGenreTags();
+
+            const sectionTitle = document.getElementById('sectionTitle');
+            const clearBtn = document.getElementById('clearFilterBtn');
+
+            if (genre) {
+                sectionTitle.textContent = `Novel ${genre}`;
+                clearBtn.classList.remove('hidden');
+            } else {
+                sectionTitle.textContent = 'Semua Novel';
+                clearBtn.classList.add('hidden');
+            }
+
+            filterAndRenderNovels();
+        };
+
+        window.clearFilter = function () {
+            filterByGenre(null);
+        };
+
+        function filterAndRenderNovels() {
+            let filtered = [...allNovels];
+
+            if (selectedGenre) {
+                filtered = allNovels.filter(n => {
+                    if (!n.genre) return false;
+                    const novelGenres = n.genre.split(',').map(g => g.trim().toLowerCase());
+                    return novelGenres.includes(selectedGenre.toLowerCase());
+                });
+            }
+
+            document.getElementById('novelCount').textContent = filtered.length;
+            renderNovels(filtered);
+        }
+
+        function renderNovels(novels) {
+            const novelsDiv = document.getElementById('novels');
+
+            if (!novels || novels.length === 0) {
+                novelsDiv.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <i class="fas fa-book text-4xl text-slate-300 dark:text-slate-600 mb-4"></i>
+                    <p class="text-slate-500 dark:text-slate-400">Tidak ada novel untuk genre ini.</p>
+                </div>
+            `;
+                return;
+            }
+
+            novelsDiv.innerHTML = novels.map(n => `
+            <a href="/novel?id=${n.id}" data-link class="novel-card group block bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div class="relative aspect-[3/4] overflow-hidden bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-slate-700 dark:to-slate-600">
+                    ${n.cover_url
+                    ? `<img src="${n.cover_url}" alt="${n.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">`
+                    : `<div class="flex items-center justify-center h-full"><i class="fas fa-book-open text-4xl text-indigo-300 dark:text-slate-500"></i></div>`
+                }
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span class="inline-flex items-center gap-1 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-indigo-600 dark:text-indigo-400 text-xs font-semibold px-2 py-1 rounded-full">
+                            <i class="fas fa-book-reader"></i> Baca
+                        </span>
+                    </div>
+                </div>
+                <div class="p-3">
+                    <h3 class="font-semibold text-slate-800 dark:text-white text-sm leading-tight line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">${n.title}</h3>
+                    <p class="text-xs text-indigo-500 dark:text-indigo-400 mt-1">${n.genre || 'No Genre'}</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">${n.description || 'Tidak ada deskripsi'}</p>
+                </div>
+            </a>
+        `).join('');
+        }
+
+        async function loadNovels() {
+            try {
+                const { data, error } = await supabase.from('novels').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                allNovels = data || [];
+                filterAndRenderNovels();
+            } catch (err) {
+                console.error('Error loading novels:', err);
+                document.getElementById('novels').innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <i class="fas fa-exclamation-circle text-4xl text-red-400 mb-4"></i>
+                    <p class="text-slate-500 dark:text-slate-400">Gagal memuat novel.</p>
+                </div>
+            `;
+            }
+        }
+
+        loadGenres();
+        loadNovels();
+    };
+</script>

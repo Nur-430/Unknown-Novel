@@ -1,33 +1,6 @@
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk - Unknown Novel</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { darkMode: 'class' }
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/theme.css">
-    <style>
-        * {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .gradient-bg {
-            background: linear-gradient(135deg, #007ACC 0%, #005A9E 100%);
-        }
-    </style>
-</head>
-
-<body class="bg-slate-50 dark:bg-slate-900 min-h-screen flex items-center justify-center p-4 transition-colors">
-
+<!-- Login Page Content -->
+<div class="min-h-[80vh] flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8">
-
-        <!-- Logo/Icon -->
         <div class="mx-auto w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center shadow-lg mb-6">
             <i class="fas fa-sign-in-alt text-white text-3xl"></i>
         </div>
@@ -37,12 +10,9 @@
             <p class="text-slate-500 dark:text-slate-400 text-sm">Masuk untuk melanjutkan membaca</p>
         </div>
 
-        <!-- Error/Success Messages -->
         <div id="messageBox" class="hidden mb-4 p-4 rounded-xl text-sm"></div>
 
-        <!-- Login Form -->
         <form id="loginForm" class="space-y-5">
-            <!-- Username/Email -->
             <div>
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     <i class="fas fa-user mr-2 text-slate-400"></i>Username / Email
@@ -52,7 +22,6 @@
                     placeholder="Masukkan username atau email">
             </div>
 
-            <!-- Password -->
             <div>
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     <i class="fas fa-lock mr-2 text-slate-400"></i>Password
@@ -68,50 +37,31 @@
                 </div>
             </div>
 
-            <!-- Submit Button -->
             <button type="submit" id="loginBtn"
                 class="w-full py-3.5 rounded-xl gradient-bg text-white font-semibold shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
                 <i class="fas fa-sign-in-alt mr-2"></i>Masuk
             </button>
         </form>
 
-        <!-- Register Link -->
         <div class="mt-6 text-center">
             <p class="text-sm text-slate-500 dark:text-slate-400">
                 Belum punya akun?
-                <a href="register.html" class="text-blue-600 dark:text-blue-400 font-medium hover:underline">Daftar
-                    sekarang</a>
+                <a href="/register" data-link
+                    class="text-blue-600 dark:text-blue-400 font-medium hover:underline">Daftar sekarang</a>
             </p>
         </div>
 
-        <!-- Admin Login Link -->
         <div class="mt-4 text-center">
             <a href="admin/login.html"
                 class="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition">
                 Login sebagai Admin
             </a>
         </div>
-
-        <!-- Back to Home -->
-        <div class="mt-4 text-center">
-            <a href="index.html"
-                class="text-sm text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition inline-flex items-center gap-2">
-                <i class="fas fa-arrow-left"></i> Kembali ke Beranda
-            </a>
-        </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="assets/js/supabase.js"></script>
-    <script src="assets/js/reader-auth.js"></script>
-
-    <script>
-        // Dark mode init
-        if (localStorage.getItem('darkMode') === 'true' || (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        }
-
-        // Toggle password visibility
+<script>
+    window.initLoginPage = function (params) {
         function togglePassword() {
             const field = document.getElementById('password');
             const eye = document.getElementById('password-eye');
@@ -125,8 +75,17 @@
                 eye.classList.add('fa-eye');
             }
         }
+        window.togglePassword = togglePassword;
 
-        // Form submission
+        function showMessage(message, type) {
+            const box = document.getElementById('messageBox');
+            box.className = type === 'success'
+                ? 'mb-4 p-4 rounded-xl text-sm bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-700'
+                : 'mb-4 p-4 rounded-xl text-sm bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-700';
+            box.textContent = message;
+            box.classList.remove('hidden');
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -147,7 +106,7 @@
                 if (result.success) {
                     showMessage('Login berhasil! Mengalihkan...', 'success');
                     setTimeout(() => {
-                        window.location.href = result.redirectUrl || 'profile.html';
+                        window.spaRouter.navigate(result.redirectUrl || '/profile');
                     }, 1000);
                 } else {
                     showMessage(result.error || 'Login gagal', 'error');
@@ -161,17 +120,5 @@
                 btn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Masuk';
             }
         });
-
-        function showMessage(message, type) {
-            const box = document.getElementById('messageBox');
-            box.className = type === 'success'
-                ? 'mb-4 p-4 rounded-xl text-sm bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-700'
-                : 'mb-4 p-4 rounded-xl text-sm bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-700';
-            box.textContent = message;
-            box.classList.remove('hidden');
-        }
-    </script>
-    <script src="assets/js/page-transitions.js"></script>
-</body>
-
-</html>
+    };
+</script>

@@ -1,0 +1,143 @@
+<!-- Home Page Content -->
+<main class="max-w-7xl mx-auto px-4 py-10 flex-1">
+    <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-1.5 h-8 gradient-bg rounded-full"></div>
+            <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Update Terbaru</h2>
+        </div>
+        <div class="flex gap-2 text-sm bg-slate-100 dark:bg-slate-800 rounded-full p-1">
+            <button onclick="filterNovels('all')" id="filterAll"
+                class="filter-btn px-4 py-1.5 rounded-full bg-white dark:bg-slate-700 font-medium shadow-sm transition"
+                style="color: #007ACC;">Semua</button>
+            <button onclick="filterNovels('popular')'" id="filterPopular"
+                class="filter-btn px-4 py-1.5 rounded-full text-slate-500 dark:text-slate-400 transition"
+                onmouseover="this.style.color='#007ACC';"
+                onmouseout="if(!this.classList.contains('bg-white')) this.style.color='';">Populer</button>
+            <button onclick="filterNovels('new')" id="filterNew"
+                class="filter-btn px-4 py-1.5 rounded-full text-slate-500 dark:text-slate-400 transition"
+                onmouseover="this.style.color='#007ACC';"
+                onmouseout="if(!this.classList.contains('bg-white')) this.style.color='';">Baru</button>
+        </div>
+    </div>
+
+    <div id="novels"
+        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+        <!-- Loading skeleton placeholder -->
+        <div class="animate-pulse space-y-3">
+            <div class="bg-slate-200 dark:bg-slate-700 aspect-[3/4] rounded-xl"></div>
+            <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4"></div>
+            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
+        </div>
+        <div class="animate-pulse space-y-3 hidden sm:block">
+            <div class="bg-slate-200 dark:bg-slate-700 aspect-[3/4] rounded-xl"></div>
+            <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4"></div>
+            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
+        </div>
+        <div class="animate-pulse space-y-3 hidden md:block">
+            <div class="bg-slate-200 dark:bg-slate-700 aspect-[3/4] rounded-xl"></div>
+            <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4"></div>
+            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
+        </div>
+        <div class="animate-pulse space-y-3 hidden lg:block">
+            <div class="bg-slate-200 dark:bg-slate-700 aspect-[3/4] rounded-xl"></div>
+            <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4"></div>
+            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Home Page Initialization
+    window.initHomePage = function (params) {
+        let allNovels = [];
+
+        function filterNovels(type) {
+            // Update button styles
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'dark:bg-slate-700', 'shadow-sm');
+                btn.classList.add('text-slate-500', 'dark:text-slate-400');
+                btn.style.color = '';
+            });
+
+            const activeBtn = document.getElementById('filter' + type.charAt(0).toUpperCase() + type.slice(1));
+            if (activeBtn) {
+                activeBtn.classList.add('bg-white', 'dark:bg-slate-700', 'shadow-sm');
+                activeBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+                activeBtn.style.color = '#007ACC';
+            }
+
+            // Filter and display
+            let filtered = [...allNovels];
+            if (type === 'new') {
+                filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            }
+
+            renderNovels(filtered);
+        }
+
+        function renderNovels(novels) {
+            const novelsDiv = document.getElementById("novels");
+
+            if (!novels || novels.length === 0) {
+                novelsDiv.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <i class="fas fa-book text-4xl text-slate-300 dark:text-slate-600 mb-4"></i>
+                    <p class="text-slate-500 dark:text-slate-400">Belum ada novel tersedia.</p>
+                </div>
+            `;
+                return;
+            }
+
+            novelsDiv.innerHTML = novels.map(n => `
+            <a href="/novel?id=${n.id}" data-link class="novel-card group block bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div class="relative aspect-[3/4] overflow-hidden bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-slate-700 dark:to-slate-600">
+                    ${n.cover_url
+                    ? `<img src="${n.cover_url}" alt="${n.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">`
+                    : `<div class="flex items-center justify-center h-full"><i class="fas fa-book-open text-4xl text-indigo-300 dark:text-slate-500"></i></div>`
+                }
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span class="inline-flex items-center gap-1 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-indigo-600 dark:text-indigo-400 text-xs font-semibold px-2 py-1 rounded-full">
+                            <i class="fas fa-book-reader"></i> Baca
+                        </span>
+                    </div>
+                </div>
+                <div class="p-3">
+                    <h3 class="font-semibold text-slate-800 dark:text-white text-sm leading-tight line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">${n.title}</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">${n.description || 'Tidak ada deskripsi'}</p>
+                </div>
+            </a>
+        `).join("");
+        }
+
+        async function loadNovels() {
+            try {
+                const { data, error } = await supabase
+                    .from("novels")
+                    .select("*")
+                    .order("created_at", { ascending: false });
+
+                if (error) {
+                    console.error("Error loading novels:", error);
+                    document.getElementById("novels").innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-exclamation-circle text-4xl text-red-400 mb-4"></i>
+                        <p class="text-slate-500 dark:text-slate-400">Gagal memuat novel.</p>
+                    </div>
+                `;
+                    return;
+                }
+
+                allNovels = data || [];
+                renderNovels(allNovels);
+            } catch (err) {
+                console.error("Error:", err);
+            }
+        }
+
+        // Make filterNovels available globally for onclick handlers
+        window.filterNovels = filterNovels;
+
+        loadNovels();
+    };
+</script>

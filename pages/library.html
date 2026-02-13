@@ -1,0 +1,116 @@
+<!-- Library Page Content -->
+<main class="max-w-6xl mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">
+            <i class="fas fa-bookmark text-blue-600 mr-2"></i>Library Saya
+        </h1>
+        <p class="text-slate-500 dark:text-slate-400">Novel yang telah Anda simpan</p>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="text-center py-12">
+        <i class="fas fa-spinner fa-spin text-4xl text-slate-400 mb-4"></i>
+        <p class="text-slate-500 dark:text-slate-400">Memuat library...</p>
+    </div>
+
+    <!-- Not Logged In -->
+    <div id="notLoggedIn" class="hidden text-center py-12">
+        <i class="fas fa-user-slash text-6xl text-slate-300 dark:text-slate-600 mb-4"></i>
+        <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Anda Belum Login</h2>
+        <p class="text-slate-500 dark:text-slate-400 mb-6">Silakan login untuk melihat library Anda</p>
+        <a href="/login" data-link
+            class="inline-block px-6 py-3 gradient-bg text-white font-semibold rounded-xl shadow-lg hover:-translate-y-0.5 transition-all">
+            <i class="fas fa-sign-in-alt mr-2"></i>Login Sekarang
+        </a>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-12">
+        <i class="fas fa-bookmark text-6xl text-slate-300 dark:text-slate-600 mb-4"></i>
+        <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Library Masih Kosong</h2>
+        <p class="text-slate-500 dark:text-slate-400 mb-6">Mulai simpan novel favorit Anda</p>
+        <a href="/explore" data-link
+            class="inline-block px-6 py-3 gradient-bg text-white font-semibold rounded-xl shadow-lg hover:-translate-y-0.5 transition-all">
+            <i class="fas fa-compass mr-2"></i>Jelajahi Novel
+        </a>
+    </div>
+
+    <!-- Bookmarks Grid -->
+    <div id="bookmarksGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 hidden">
+        <!-- Will be populated by JavaScript -->
+    </div>
+</main>
+
+<script>
+    window.initLibraryPage = function (params) {
+        // Load bookmarks
+        async function loadBookmarks() {
+            const user = await getCurrentUser();
+            document.getElementById('loadingState').classList.add('hidden');
+
+            if (!user) {
+                document.getElementById('notLoggedIn').classList.remove('hidden');
+                return;
+            }
+
+            const bookmarks = await getUserBookmarks();
+
+            if (bookmarks.length === 0) {
+                document.getElementById('emptyState').classList.remove('hidden');
+                return;
+            }
+
+            const grid = document.getElementById('bookmarksGrid');
+            grid.classList.remove('hidden');
+
+            grid.innerHTML = bookmarks.map(bookmark => {
+                const novel = bookmark.novels;
+                if (!novel) return '';
+
+                return `
+                <div class="novel-card group relative bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                    <a href="/novel?id=${novel.id}" data-link class="block">
+                        <div class="relative aspect-[3/4] overflow-hidden bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-slate-700 dark:to-slate-600">
+                            ${novel.cover_url
+                        ? `<img src="${novel.cover_url}" alt="${novel.title}" class="w-full h-full object-cover">`
+                        : `<div class="flex items-center justify-center h-full"><i class="fas fa-book-open text-4xl text-indigo-300 dark:text-slate-500"></i></div>`
+                    }
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span class="inline-flex items-center gap-1 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-indigo-600 dark:text-indigo-400 text-xs font-semibold px-2 py-1 rounded-full">
+                                    <i class="fas fa-book-reader"></i> Baca
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="p-3">
+                        <h3 class="font-semibold text-slate-800 dark:text-white text-sm leading-tight line-clamp-2 mb-1">${novel.title}</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">${novel.author || 'Unknown'}</p>
+                        <button onclick="removeBookmarkFromLibrary('${novel.id}', this)" class="mt-2 w-full py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition font-medium">
+                            <i class="fas fa-trash mr-1"></i>Hapus
+                        </button>
+                    </div>
+                </div>
+            `;
+            }).join('');
+        }
+
+        window.removeBookmarkFromLibrary = async function (novelId, btn) {
+            if (!confirm('Hapus novel dari library?')) return;
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
+
+            const result = await removeBookmark(novelId);
+            if (result.success) {
+                loadBookmarks();
+            } else {
+                alert(result.error || 'Gagal menghapus bookmark');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-trash mr-1"></i>Hapus';
+            }
+        };
+
+        loadBookmarks();
+    };
+</script>

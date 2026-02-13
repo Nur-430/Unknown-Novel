@@ -1,0 +1,28 @@
+<!-- Read Page - Placeholder -->
+<div class="max-w-4xl mx-auto px-4 py-10">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-12 text-center">
+        <i class="fas fa-book-reader text-6xl text-blue-500 mb-4"></i>
+        <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Reader</h2>
+        <p class="text-slate-600 dark:text-slate-400 mb-6">Halaman baca chapter sedang dalam pengembangan</p>
+        <div id="chapterInfo" class="mb-4"></div>
+        <a href="/" data-link
+            class="inline-block px-6 py-3 gradient-bg text-white rounded-lg font-semibold hover:shadow-lg transition">
+            <i class="fas fa-home mr-2"></i>Kembali ke Beranda
+        </a>
+    </div>
+</div>
+
+<script>
+    window.initReadPage = function (params) {
+        const novelId = params.get('novel');
+        const chapterId = params.get('chapter');
+        if (novelId && chapterId) {
+            document.getElementById('chapterInfo').innerHTML = `
+            <p class="text-sm text-slate-600 dark:text-slate-400">
+                Novel ID: <span class="font-mono font-semibold">${novelId}</span><br>
+                Chapter ID: <span class="font-mono font-semibold">${chapterId}</span>
+            </p>
+        `;
+        }
+    };
+</script>
