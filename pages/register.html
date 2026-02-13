@@ -92,11 +92,11 @@
     </div>
 </div>
 
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
 <script>
     window.initRegisterPage = function (params) {
-        // Initialize CAPTCHA based on environment
+        let widgetId = null;
+
+        // Initialize CAPTCHA
         function initCaptcha() {
             const hostname = window.location.hostname;
             const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
@@ -106,20 +106,51 @@
                 ? '6Le6iGcsAAAAAFfj5Io5ZeR84I7X14Afl6-9D7wV' // Test key for localhost
                 : '6Le6iGcsAAAAAFfj5Io5ZeR84I7X14Afl6-9D7wV'; // Production key
 
-            // Create CAPTCHA element
-            const captchaDiv = document.createElement('div');
-            captchaDiv.className = 'g-recaptcha';
-            captchaDiv.setAttribute('data-sitekey', siteKey);
+            // Function to render the widget
+            const renderCaptcha = () => {
+                if (window.grecaptcha && window.grecaptcha.render) {
+                    try {
+                        const container = document.getElementById('captchaContainer');
+                        if (container) {
+                            container.innerHTML = ''; // Clear previous instances
+                            widgetId = grecaptcha.render(container, {
+                                'sitekey': siteKey
+                            });
+                        }
+                    } catch (e) {
+                        console.error('reCAPTCHA render error:', e);
+                    }
+                }
+            };
 
-            document.getElementById('captchaContainer').appendChild(captchaDiv);
+            // Load script if not present
+            if (typeof window.grecaptcha === 'undefined' || typeof window.grecaptcha.render === 'undefined') {
+                // Check if script is already loading
+                if (!document.getElementById('recaptcha-script')) {
+                    const script = document.createElement('script');
+                    script.id = 'recaptcha-script';
+                    script.src = 'https://www.google.com/recaptcha/api.js?render=explicit';
+                    script.async = true;
+                    script.defer = true;
+                    script.onload = renderCaptcha;
+                    document.body.appendChild(script);
+                } else {
+                    // Script exists but maybe not fully loaded, poll for it
+                    const checkInterval = setInterval(() => {
+                        if (window.grecaptcha && window.grecaptcha.render) {
+                            clearInterval(checkInterval);
+                            renderCaptcha();
+                        }
+                    }, 100);
+                }
+            } else {
+                // Script already loaded and ready
+                renderCaptcha();
+            }
         }
 
-        // Wait for reCAPTCHA script to load
-        setTimeout(() => {
-            if (typeof grecaptcha !== 'undefined') {
-                initCaptcha();
-            }
-        }, 500);
+        // Initialize immediately
+        initCaptcha();
 
         // Toggle password visibility
         window.togglePassword = function (fieldId) {
@@ -145,8 +176,8 @@
             const confirmPassword = document.getElementById('confirmPassword').value;
 
             let recaptchaResponse = '';
-            if (typeof grecaptcha !== 'undefined') {
-                recaptchaResponse = grecaptcha.getResponse();
+            if (widgetId !== null && typeof grecaptcha !== 'undefined') {
+                recaptchaResponse = grecaptcha.getResponse(widgetId);
             }
 
             // Validation
@@ -184,14 +215,14 @@
                     }, 1500);
                 } else {
                     showMessage(result.error || 'Registrasi gagal', 'error');
-                    if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
+                    if (widgetId !== null) grecaptcha.reset(widgetId);
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fas fa-user-plus mr-2"></i>Daftar Sekarang';
                 }
             } catch (err) {
                 console.error('Registration error:', err);
                 showMessage('Terjadi kesalahan. Silakan coba lagi.', 'error');
-                if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
+                if (widgetId !== null) grecaptcha.reset(widgetId);
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-user-plus mr-2"></i>Daftar Sekarang';
             }
