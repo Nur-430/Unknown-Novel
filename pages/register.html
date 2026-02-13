@@ -95,57 +95,63 @@
 <script>
     window.initRegisterPage = function (params) {
         let widgetId = null;
+        const hostname = window.location.hostname;
+        const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
 
         // Initialize CAPTCHA
         function initCaptcha() {
-            const hostname = window.location.hostname;
-            const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+            const container = document.getElementById('captchaContainer');
+
+            // If localhost, skip reCAPTCHA
+            if (isLocalhost) {
+                if (container) {
+                    container.innerHTML = `
+                        <div class="px-4 py-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700/50 rounded-lg flex items-center gap-3">
+                            <i class="fas fa-shield-alt text-yellow-600 dark:text-yellow-500"></i>
+                            <span class="text-sm text-yellow-700 dark:text-yellow-400 font-medium">CAPTCHA dinonaktifkan di Localhost</span>
+                        </div>
+                    `;
+                }
+                return;
+            }
 
             // Choose site key based on environment
-            const siteKey = isLocalhost
-                ? '6Le6iGcsAAAAAFfj5Io5ZeR84I7X14Afl6-9D7wV' // Test key for localhost
-                : '6Le6iGcsAAAAAFfj5Io5ZeR84I7X14Afl6-9D7wV'; // Production key
+            const siteKey = '6Le6iGcsAAAAAFfj5Io5ZeR84I7X14Afl6-9D7wV'; // Production key
 
-            // Function to render the widget
+            // Safe render function
             const renderCaptcha = () => {
-                if (window.grecaptcha && window.grecaptcha.render) {
-                    try {
-                        const container = document.getElementById('captchaContainer');
-                        if (container) {
-                            container.innerHTML = ''; // Clear previous instances
-                            widgetId = grecaptcha.render(container, {
-                                'sitekey': siteKey
-                            });
-                        }
-                    } catch (e) {
-                        console.error('reCAPTCHA render error:', e);
+                if (!window.grecaptcha || !window.grecaptcha.render) return;
+
+                try {
+                    const container = document.getElementById('captchaContainer');
+                    if (container) {
+                        container.innerHTML = ''; // Clear previous instances
+                        widgetId = grecaptcha.render(container, {
+                            'sitekey': siteKey
+                        });
+                        console.log('reCAPTCHA rendered with widgetId:', widgetId);
                     }
+                } catch (e) {
+                    console.error('reCAPTCHA render error:', e);
                 }
             };
 
             // Load script if not present
-            if (typeof window.grecaptcha === 'undefined' || typeof window.grecaptcha.render === 'undefined') {
-                // Check if script is already loading
+            if (typeof window.grecaptcha === 'undefined') {
                 if (!document.getElementById('recaptcha-script')) {
                     const script = document.createElement('script');
                     script.id = 'recaptcha-script';
                     script.src = 'https://www.google.com/recaptcha/api.js?render=explicit';
                     script.async = true;
                     script.defer = true;
-                    script.onload = renderCaptcha;
+                    script.onload = () => {
+                        window.grecaptcha.ready(renderCaptcha);
+                    };
                     document.body.appendChild(script);
-                } else {
-                    // Script exists but maybe not fully loaded, poll for it
-                    const checkInterval = setInterval(() => {
-                        if (window.grecaptcha && window.grecaptcha.render) {
-                            clearInterval(checkInterval);
-                            renderCaptcha();
-                        }
-                    }, 100);
                 }
             } else {
-                // Script already loaded and ready
-                renderCaptcha();
+                // Script already loaded
+                window.grecaptcha.ready(renderCaptcha);
             }
         }
 
@@ -175,9 +181,25 @@
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
+            // Retrieve CAPTCHA response safely
             let recaptchaResponse = '';
-            if (widgetId !== null && typeof grecaptcha !== 'undefined') {
-                recaptchaResponse = grecaptcha.getResponse(widgetId);
+            if (!isLocalhost && typeof grecaptcha !== 'undefined') {
+                try {
+                    if (widgetId !== null) {
+                        recaptchaResponse = grecaptcha.getResponse(widgetId);
+                    } else {
+                        // Fallback if widgetId is missing but widget might exist
+                        recaptchaResponse = grecaptcha.getResponse();
+                    }
+                } catch (err) {
+                    console.error('Error getting reCAPTCHA response:', err);
+                    // Attempt fallback without ID
+                    try {
+                        recaptchaResponse = grecaptcha.getResponse();
+                    } catch (e2) {
+                        console.error('Fallback reCAPTCHA check failed:', e2);
+                    }
+                }
             }
 
             // Validation
@@ -196,7 +218,8 @@
                 return;
             }
 
-            if (!recaptchaResponse) {
+            // Skip CAPTCHA check on localhost
+            if (!isLocalhost && !recaptchaResponse) {
                 showMessage('Silakan selesaikan CAPTCHA', 'error');
                 return;
             }
@@ -215,14 +238,14 @@
                     }, 1500);
                 } else {
                     showMessage(result.error || 'Registrasi gagal', 'error');
-                    if (widgetId !== null) grecaptcha.reset(widgetId);
+                    if (!isLocalhost && widgetId !== null) grecaptcha.reset(widgetId);
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fas fa-user-plus mr-2"></i>Daftar Sekarang';
                 }
             } catch (err) {
                 console.error('Registration error:', err);
                 showMessage('Terjadi kesalahan. Silakan coba lagi.', 'error');
-                if (widgetId !== null) grecaptcha.reset(widgetId);
+                if (!isLocalhost && widgetId !== null) grecaptcha.reset(widgetId);
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-user-plus mr-2"></i>Daftar Sekarang';
             }
