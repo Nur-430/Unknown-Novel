@@ -18,7 +18,7 @@ async function registerUser(username, password) {
         }
 
         // Create a dummy email from username for Supabase Auth
-        const email = `${username}@reader.unknownnovel.local`;
+        const email = `${username}@unknownnovel.reader`;
 
         // Sign up with Supabase Auth
         const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -154,7 +154,7 @@ async function loginUser(input, password) {
                 };
             }
             username = profile.username;
-            email = `${username}@reader.unknownnovel.local`; // Construct email
+            email = `${username}@unknownnovel.reader`; // Construct email
         }
 
         // Sign in with Supabase Auth
@@ -287,7 +287,7 @@ async function changePassword(currentPassword, newPassword) {
         }
 
         // Verify current password by attempting to re-login
-        const email = `${user.username}@reader.unknownnovel.local`;
+        const email = `${user.username}@unknownnovel.reader`;
         const { error: verifyError } = await supabase.auth.signInWithPassword({
             email: email,
             password: currentPassword
