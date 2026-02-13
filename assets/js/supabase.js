@@ -7,7 +7,13 @@ console.log("Initializing Supabase with URL:", SUPABASE_URL);
 try {
   // SDK exposes createClient on window.supabase
   const { createClient } = window.supabase;
-  const client = createClient(SUPABASE_URL, SUPABASE_KEY);
+  const client = createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  });
 
   // Assign to both names for compatibility across all pages
   window.supabaseClient = client;

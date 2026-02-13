@@ -248,6 +248,9 @@
       <p>Silakan masuk untuk mengakses dashboard</p>
     </div>
 
+    <div id="errorMessage"
+      class="hidden mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm text-center"></div>
+
     <form onsubmit="event.preventDefault(); login();">
       <div class="form-group">
         <label for="email" class="form-label">Email Address</label>
@@ -314,10 +317,16 @@
 
       // Cek jika supabaseClient sudah terdefinisi dari file eksternal
       if (typeof supabaseClient === 'undefined') {
-        console.error("supabaseClient tidak ditemukan. Pastikan ../assets/js/supabase.js sudah dimuat dengan benar.");
-        alert("Error: Konfigurasi Supabase belum dimuat.");
+        const msg = "supabaseClient tidak ditemukan. Pastikan ../assets/js/supabase.js sudah dimuat dengan benar.";
+        console.error(msg);
+        showError(msg);
         return;
       }
+
+      const loginBtn = document.querySelector('.btn-login');
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+      hideError();
 
       const { error } = await supabaseClient.auth.signInWithPassword({
         email,
@@ -325,10 +334,27 @@
       });
 
       if (error) {
-        alert("Login gagal: " + error.message);
+        console.error("Login Error:", error);
+        showError("Login gagal: " + error.message);
       } else {
-        location.href = "dashboard.html";
+        console.log("Login successful, redirecting...");
+        window.location.replace("dashboard.html");
       }
+
+      loginBtn.disabled = false;
+      loginBtn.innerHTML = 'Masuk Dashboard';
+
+    }
+
+    function showError(message) {
+      const errorDiv = document.getElementById('errorMessage');
+      errorDiv.textContent = message;
+      errorDiv.classList.remove('hidden');
+    }
+
+    function hideError() {
+      const errorDiv = document.getElementById('errorMessage');
+      errorDiv.classList.add('hidden');
     }
 
     // --- 4️⃣ FITUR TAMBAHAN (UI ONLY) ---

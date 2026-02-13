@@ -132,24 +132,30 @@ async function registerUser(username, password) {
  * @param {string} password - Password
  * @returns {Object} - { success: boolean, error?: string, user?: Object }
  */
-async function loginUser(username, password) {
+async function loginUser(input, password) {
     try {
-        // Get profile to find the user ID
-        const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('username', username)
-            .single();
+        let email = input;
+        let isEmail = input.includes('@');
+        let username = isEmail ? null : input;
 
-        if (profileError || !profile) {
-            return {
-                success: false,
-                error: 'Username atau password salah'
-            };
+        // If input is username, resolve to email
+        if (!isEmail) {
+            // Get profile to find the user ID/email construction
+            const { data: profile, error: profileError } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('username', input)
+                .single();
+
+            if (profileError || !profile) {
+                return {
+                    success: false,
+                    error: 'Username tidak ditemukan'
+                };
+            }
+            username = profile.username;
+            email = `${username}@reader.unknownnovel.local`; // Construct email
         }
-
-        // Construct email from username
-        const email = `${username}@reader.unknownnovel.local`;
 
         // Sign in with Supabase Auth
         const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
@@ -160,23 +166,44 @@ async function loginUser(username, password) {
         if (authError) {
             return {
                 success: false,
-                error: 'Username atau password salah'
+                error: 'Login gagal: Email/Username atau password salah'
             };
         }
 
-        // Store session info
-        localStorage.setItem('reader_user', JSON.stringify({
-            id: authData.user.id,
-            username: profile.username,
-            created_at: profile.created_at
-        }));
+        // Check for Profile to determine Role/Redirect
+        const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', authData.user.id)
+            .single();
+
+        let redirectUrl = 'profile.html';
+        let userRole = 'reader';
+
+        if (profileError || !profile) {
+            // No profile found -> Assume Admin
+            userRole = 'admin';
+            redirectUrl = 'admin/dashboard.html';
+            console.log("No reader profile found for this user. Assuming Admin.");
+        } else {
+            // Profile found -> Reader
+            username = profile.username;
+            // Store session info for Reader
+            localStorage.setItem('reader_user', JSON.stringify({
+                id: authData.user.id,
+                username: username,
+                created_at: profile.created_at
+            }));
+        }
 
         return {
             success: true,
+            redirectUrl: redirectUrl,
+            role: userRole,
             user: {
                 id: authData.user.id,
-                username: profile.username,
-                created_at: profile.created_at
+                username: username || authData.user.email,
+                role: userRole
             }
         };
 
