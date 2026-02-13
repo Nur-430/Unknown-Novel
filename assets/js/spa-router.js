@@ -117,13 +117,25 @@
         // Handle route change
         async handleRoute(path) {
             // Extract pathname without query string
-            const pathname = path.split('?')[0];
+            let pathname = path.split('?')[0];
+
+            // Redirect /index.html to /
+            if (pathname === '/index.html') {
+                history.replaceState(null, null, '/');
+                pathname = '/';
+            }
 
             // Find matching route
             const route = this.routes[pathname];
 
             if (!route) {
                 console.error(`Route not found: ${pathname}`);
+                // Redirect to home for unknown routes
+                if (pathname !== '/') {
+                    history.replaceState(null, null, '/');
+                    this.handleRoute('/');
+                    return;
+                }
                 this.show404();
                 return;
             }
@@ -173,6 +185,15 @@
                 // Update content
                 contentEl.innerHTML = html;
 
+                // Execute scripts found in the content
+                const scripts = contentEl.querySelectorAll('script');
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+
                 // Remove transitioning class and add slide-in class
                 contentEl.classList.remove(outClass);
                 contentEl.classList.add(inClass);
@@ -181,11 +202,14 @@
                 window.scrollTo({ top: 0, behavior: 'instant' });
 
                 // Call page-specific initialization function if it exists
-                if (route.init && typeof window[route.init] === 'function') {
-                    // Pass query parameters to init function
-                    const params = new URLSearchParams(fullPath.split('?')[1] || '');
-                    window[route.init](params);
-                }
+                // We wrap this in a slight timeout to ensure scripts have parsed/executed
+                setTimeout(() => {
+                    if (route.init && typeof window[route.init] === 'function') {
+                        // Pass query parameters to init function
+                        const params = new URLSearchParams(fullPath.split('?')[1] || '');
+                        window[route.init](params);
+                    }
+                }, 0);
 
                 // Re-attach event listeners for dynamic content
                 this.attachDynamicListeners();

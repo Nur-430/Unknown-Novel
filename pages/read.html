@@ -1,28 +1,383 @@
-<!-- Read Page - Placeholder -->
-<div class="max-w-4xl mx-auto px-4 py-10">
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-12 text-center">
-        <i class="fas fa-book-reader text-6xl text-blue-500 mb-4"></i>
-        <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Reader</h2>
-        <p class="text-slate-600 dark:text-slate-400 mb-6">Halaman baca chapter sedang dalam pengembangan</p>
-        <div id="chapterInfo" class="mb-4"></div>
-        <a href="/" data-link
-            class="inline-block px-6 py-3 gradient-bg text-white rounded-lg font-semibold hover:shadow-lg transition">
-            <i class="fas fa-home mr-2"></i>Kembali ke Beranda
-        </a>
+<!-- Chapter Reader Page -->
+<style>
+    .gradient-bg {
+        background: linear-gradient(135deg, #007ACC 0%, #005A9E 100%);
+    }
+
+    /* Font families */
+    .font-inter {
+        font-family: 'Inter', sans-serif;
+    }
+
+    .font-merriweather {
+        font-family: 'Merriweather', serif;
+    }
+
+    .font-lora {
+        font-family: 'Lora', serif;
+    }
+
+    .font-roboto {
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .font-opensans {
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    /* Settings panel animation */
+    .settings-panel {
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+    }
+
+    .settings-panel.open {
+        transform: translateX(0);
+    }
+
+    /* Chapter list panel animation */
+    .chapter-panel {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .chapter-panel.open {
+        transform: translateX(0);
+    }
+
+    /* Overlay */
+    .panel-overlay {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .panel-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* Reading content styles */
+    #reading-content {
+        transition: font-size 0.2s ease, font-family 0.2s ease;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+    }
+
+    #reading-content p {
+        margin-bottom: 1.5em;
+        text-align: justify;
+    }
+
+    /* Progress bar */
+    #progress-bar {
+        transition: width 0.1s ease;
+    }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&family=Lora:wght@400;500;600&family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
+<!-- Progress Bar -->
+<div class="fixed top-0 left-0 right-0 h-1 bg-slate-200 dark:bg-slate-800 z-[60]">
+    <div id="progress-bar" class="h-full gradient-bg w-0"></div>
+</div>
+
+<!-- Header -->
+<header
+    class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-100 dark:border-slate-700">
+    <div class="max-w-4xl mx-auto px-4 h-14 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <button onclick="openChapterPanel()"
+                class="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition"
+                title="Daftar Chapter">
+                <i class="fas fa-list text-lg"></i>
+            </button>
+            <a href="#" id="backToNovel" data-link
+                class="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                <i class="fas fa-arrow-left"></i>
+                <span class="hidden sm:inline text-sm font-medium truncate max-w-[200px]" id="novelTitle">Novel</span>
+            </a>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="openSettings()"
+                class="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition"
+                title="Pengaturan">
+                <i class="fas fa-cog text-lg"></i>
+            </button>
+        </div>
     </div>
+</header>
+
+<!-- Main Content -->
+<main class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Chapter Title -->
+    <div class="text-center mb-8">
+        <span class="text-sm text-indigo-600 dark:text-indigo-400 font-medium" id="chapterNumber">Chapter 1</span>
+        <h1 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white mt-2" id="chapterTitle">Loading...</h1>
+    </div>
+
+    <!-- Reading Content -->
+    <article id="reading-content"
+        class="prose prose-slate dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed font-inter">
+        <div class="text-center py-12">
+            <i class="fas fa-spinner fa-spin text-3xl text-slate-400 dark:text-slate-600"></i>
+            <p class="text-slate-500 dark:text-slate-400 mt-4">Memuat konten...</p>
+        </div>
+    </article>
+
+    <!-- Chapter Navigation -->
+    <div class="flex items-center justify-between mt-12 py-6 border-t border-slate-200 dark:border-slate-700">
+        <button id="prevChapter" onclick="goToPrevChapter()"
+            class="flex items-center gap-2 px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-indigo-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled>
+            <i class="fas fa-chevron-left"></i>
+            <span class="hidden sm:inline">Sebelumnya</span>
+        </button>
+        <button onclick="openChapterPanel()"
+            class="flex items-center gap-2 px-4 py-3 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition">
+            <i class="fas fa-list"></i>
+            <span class="hidden sm:inline">Daftar Chapter</span>
+        </button>
+        <button id="nextChapter" onclick="goToNextChapter()"
+            class="flex items-center gap-2 px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-indigo-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled>
+            <span class="hidden sm:inline">Selanjutnya</span>
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+</main>
+
+<!-- Chapter List Panel -->
+<div id="chapterPanel"
+    class="chapter-panel fixed left-0 top-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-slate-800 shadow-2xl z-[70] overflow-y-auto">
+    <div class="p-6">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white">Daftar Chapter</h3>
+            <button onclick="closeChapterPanel()"
+                class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul id="chapterList" class="space-y-2"></ul>
+    </div>
+</div>
+
+<!-- Settings Panel -->
+<div id="settingsPanel"
+    class="settings-panel fixed right-0 top-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-slate-800 shadow-2xl z-[70] overflow-y-auto">
+    <div class="p-6">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white">Pengaturan</h3>
+            <button onclick="closeSettings()"
+                class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Font Size -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Ukuran Font</label>
+            <input type="range" id="fontSize" min="14" max="24" value="16" step="1" class="w-full accent-indigo-600"
+                onchange="updateFontSize(this.value)">
+            <div class="flex justify-between text-xs text-slate-500 dark:text-slate-400 mt-1">
+                <span>A</span>
+                <span class="text-base font-medium" id="fontSizeValue">16px</span>
+                <span class="text-xl">A</span>
+            </div>
+        </div>
+
+        <!-- Font Family -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Jenis Font</label>
+            <select id="fontFamily" onchange="updateFontFamily(this.value)"
+                class="w-full px-4 py-2 rounded-lg border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white focus:border-indigo-500 outline-none">
+                <option value="font-inter">Inter (Sans-serif)</option>
+                <option value="font-merriweather">Merriweather (Serif)</option>
+                <option value="font-lora">Lora (Serif)</option>
+                <option value="font-roboto">Roboto (Sans-serif)</option>
+                <option value="font-opensans">Open Sans (Sans-serif)</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- Overlay -->
+<div id="panelOverlay" class="panel-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-[65]" onclick="closePanels()">
 </div>
 
 <script>
     window.initReadPage = function (params) {
-        const novelId = params.get('novel');
-        const chapterId = params.get('chapter');
-        if (novelId && chapterId) {
-            document.getElementById('chapterInfo').innerHTML = `
-            <p class="text-sm text-slate-600 dark:text-slate-400">
-                Novel ID: <span class="font-mono font-semibold">${novelId}</span><br>
-                Chapter ID: <span class="font-mono font-semibold">${chapterId}</span>
-            </p>
-        `;
+        const chapterId = params.get("id");
+        let currentChapter = null;
+        let allChapters = [];
+        let novelId = null;
+
+        // Load chapter content
+        async function loadChapter() {
+            if (!chapterId) {
+                alert('Chapter ID tidak valid');
+                window.spaRouter.navigate('/');
+                return;
+            }
+
+            try {
+                const { data: chapter, error } = await supabase
+                    .from('chapters')
+                    .select('*, novels(*)')
+                    .eq('id', chapterId)
+                    .single();
+
+                if (error || !chapter) {
+                    alert('Chapter tidak ditemukan');
+                    window.spaRouter.navigate('/');
+                    return;
+                }
+
+                currentChapter = chapter;
+                novelId = chapter.novel_id;
+
+                // Load all chapters for this novel
+                const { data: chapters } = await supabase
+                    .from('chapters')
+                    .select('*')
+                    .eq('novel_id', novelId)
+                    .order('chapter_number', { ascending: true });
+
+                allChapters = chapters || [];
+
+                displayChapter(chapter);
+                loadChapterList();
+                updateNavigationButtons();
+                recordReadingHistory(chapter);
+            } catch (err) {
+                console.error('Error loading chapter:', err);
+                alert('Gagal memuat chapter');
+            }
         }
+
+        function displayChapter(chapter) {
+            document.getElementById('chapterNumber').textContent = `Chapter ${chapter.chapter_number}`;
+            document.getElementById('chapterTitle').textContent = chapter.title;
+            document.getElementById('novelTitle').textContent = chapter.novels.title;
+            document.getElementById('backToNovel').href = `/novel?id=${chapter.novel_id}`;
+
+            document.getElementById('reading-content').innerHTML = `<p>${chapter.content.replace(/\n/g, '</p><p>')}</p>`;
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function loadChapterList() {
+            const listHTML = allChapters.map(ch => `
+            <li>
+                <a href="/read?id=${ch.id}" data-link
+                    class="block p-3 rounded-lg ${ch.id === chapterId ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-300'} hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition">
+                    <span class="text-xs">Chapter ${ch.chapter_number}</span>
+                    <p class="font-medium text-sm truncate">${ch.title}</p>
+                </a>
+            </li>
+        `).join('');
+            document.getElementById('chapterList').innerHTML = listHTML;
+        }
+
+        function updateNavigationButtons() {
+            const currentIndex = allChapters.findIndex(ch => ch.id === chapterId);
+
+            const prevBtn = document.getElementById('prevChapter');
+            const nextBtn = document.getElementById('nextChapter');
+
+            if (currentIndex > 0) {
+                prevBtn.disabled = false;
+                prevBtn.onclick = () => window.spaRouter.navigate(`/read?id=${allChapters[currentIndex - 1].id}`);
+            } else {
+                prevBtn.disabled = true;
+            }
+
+            if (currentIndex < allChapters.length - 1) {
+                nextBtn.disabled = false;
+                nextBtn.onclick = () => window.spaRouter.navigate(`/read?id=${allChapters[currentIndex + 1].id}`);
+            } else {
+                nextBtn.disabled = true;
+            }
+        }
+
+        async function recordReadingHistory(chapter) {
+            const user = await getCurrentUser();
+            if (!user) return;
+
+            await supabase
+                .from('reading_history')
+                .upsert({
+                    user_id: user.id,
+                    novel_id: chapter.novel_id,
+                    chapter_id: chapter.id,
+                    last_read_at: new Date().toISOString()
+                }, {
+                    onConflict: 'user_id,chapter_id'
+                });
+        }
+
+        // Panel controls
+        window.openChapterPanel = function () {
+            document.getElementById('chapterPanel').classList.add('open');
+            document.getElementById('panelOverlay').classList.add('open');
+        };
+
+        window.closeChapterPanel = function () {
+            document.getElementById('chapterPanel').classList.remove('open');
+            document.getElementById('panelOverlay').classList.remove('open');
+        };
+
+        window.openSettings = function () {
+            document.getElementById('settingsPanel').classList.add('open');
+            document.getElementById('panelOverlay').classList.add('open');
+        };
+
+        window.closeSettings = function () {
+            document.getElementById('settingsPanel').classList.remove('open');
+            document.getElementById('panelOverlay').classList.remove('open');
+        };
+
+        window.closePanels = function () {
+            closeChapterPanel();
+            closeSettings();
+        };
+
+        // Settings controls
+        window.updateFontSize = function (size) {
+            document.getElementById('reading-content').style.fontSize = size + 'px';
+            document.getElementById('fontSizeValue').textContent = size + 'px';
+            localStorage.setItem('readerFontSize', size);
+        };
+
+        window.updateFontFamily = function (font) {
+            const content = document.getElementById('reading-content');
+            content.className = content.className.replace(/font-\w+/, font);
+            localStorage.setItem('readerFontFamily', font);
+        };
+
+        // Load saved settings
+        const savedFontSize = localStorage.getItem('readerFontSize') || '16';
+        const savedFontFamily = localStorage.getItem('readerFontFamily') || 'font-inter';
+
+        document.getElementById('fontSize').value = savedFontSize;
+        updateFontSize(savedFontSize);
+
+        document.getElementById('fontFamily').value = savedFontFamily;
+        updateFontFamily(savedFontFamily);
+
+        // Progress bar on scroll
+        window.addEventListener('scroll', () => {
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = (window.scrollY / docHeight) * 100;
+            document.getElementById('progress-bar').style.width = scrolled + '%';
+        });
+
+        loadChapter();
     };
 </script>

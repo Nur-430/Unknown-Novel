@@ -1,24 +1,202 @@
-<!-- Novel Detail Page - Placeholder -->
-<div class="max-w-5xl mx-auto px-4 py-10">
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-12 text-center">
-        <i class="fas fa-book-open text-6xl text-blue-500 mb-4"></i>
-        <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Detail Novel</h2>
-        <p class="text-slate-600 dark:text-slate-400 mb-6">Halaman detail novel sedang dalam pengembangan</p>
-        <div id="novelId" class="mb-4"></div>
-        <a href="/explore" data-link
-            class="inline-block px-6 py-3 gradient-bg text-white rounded-lg font-semibold hover:shadow-lg transition">
-            <i class="fas fa-compass mr-2"></i>Jelajahi Novel
+<!-- Novel Detail Page -->
+<main class="max-w-6xl mx-auto py-8 px-4">
+    <!-- Loading State -->
+    <div id="loading-state" class="bg-white dark:bg-slate-800 shadow-lg rounded-2xl p-8 animate-pulse">
+        <div class="flex flex-col md:flex-row gap-8">
+            <div class="w-full md:w-64 h-80 bg-slate-200 dark:bg-slate-700 rounded-xl"></div>
+            <div class="flex-1 space-y-4">
+                <div class="h-8 bg-slate-200 dark:bg-slate-700 rounded w-3/4"></div>
+                <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
+                <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/3"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Novel Detail Container -->
+    <div id="novel-container" class="hidden">
+        <!-- Novel Info Card -->
+        <div class="bg-white dark:bg-slate-800 shadow-lg rounded-2xl overflow-hidden mb-6">
+            <div id="novel-detail" class="flex flex-col md:flex-row gap-6 p-6 md:p-8"></div>
+        </div>
+
+        <!-- Synopsis Card -->
+        <div class="bg-white dark:bg-slate-800 shadow-lg rounded-2xl p-6 md:p-8 mb-6">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-1.5 h-8 gradient-bg rounded-full"></div>
+                <h2 class="font-bold text-xl text-slate-800 dark:text-white">Sinopsis</h2>
+            </div>
+            <div id="novel-synopsis" class="text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+            </div>
+        </div>
+
+        <!-- Chapters Card -->
+        <div class="bg-white dark:bg-slate-800 shadow-lg rounded-2xl p-6 md:p-8">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-8 gradient-bg rounded-full"></div>
+                    <h2 class="font-bold text-xl text-slate-800 dark:text-white">Daftar Chapter</h2>
+                </div>
+                <span id="chapter-count" class="text-sm text-slate-500 dark:text-slate-400"></span>
+            </div>
+            <ul id="chapters-list" class="space-y-2"></ul>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-state" class="hidden bg-white dark:bg-slate-800 shadow-lg rounded-2xl p-12 text-center">
+        <i class="fas fa-exclamation-circle text-5xl text-red-400 mb-4"></i>
+        <h2 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Novel Tidak Ditemukan</h2>
+        <p class="text-slate-500 dark:text-slate-400 mb-6">Novel yang Anda cari tidak ada atau telah dihapus.</p>
+        <a href="/" data-link
+            class="inline-flex items-center gap-2 gradient-bg text-white px-6 py-3 rounded-full font-semibold hover:opacity-90 transition">
+            <i class="fas fa-home"></i> Kembali ke Beranda
         </a>
     </div>
-</div>
+</main>
 
 <script>
     window.initNovelPage = function (params) {
-        const novelId = params.get('id');
-        if (novelId) {
-            document.getElementById('novelId').innerHTML = `
-            <p class="text-sm text-slate-600 dark:text-slate-400">Novel ID: <span class="font-mono font-semibold">${novelId}</span></p>
-        `;
+        const novelId = params.get("id");
+
+        async function loadNovelDetail() {
+            if (!novelId) { showError(); return; }
+
+            try {
+                const { data: novel, error: novelError } = await supabase
+                    .from("novels").select("*").eq("id", novelId).single();
+
+                if (novelError || !novel) { showError(); return; }
+
+                const { data: chapters } = await supabase
+                    .from("chapters").select("*").eq("novel_id", novelId)
+                    .order("chapter_number", { ascending: true });
+
+                displayNovelDetail(novel, chapters || []);
+            } catch (err) {
+                console.error('Error loading novel:', err);
+                showError();
+            }
         }
+
+        function displayNovelDetail(novel, chapters) {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('novel-container').classList.remove('hidden');
+
+            // Novel Detail
+            const detailHTML = `
+            <div class="w-full md:w-64 flex-shrink-0">
+                <img src="${novel.cover_url || 'https://via.placeholder.com/256x384'}" 
+                    alt="${novel.title}"
+                    class="w-full rounded-xl shadow-lg"
+                    onerror="this.src='https://via.placeholder.com/256x384?text=No+Cover'">
+            </div>
+            <div class="flex-1">
+                <h1 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">${novel.title}</h1>
+                <p class="text-slate-600 dark:text-slate-400 mb-4"><i class="fas fa-user mr-2"></i>${novel.author || 'Unknown'}</p>
+                ${novel.genre ? `<span class="inline-block px-3 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-sm font-medium mb-4"><i class="fas fa-tag mr-1"></i>${novel.genre}</span>` : ''}
+                <div class="flex items-center gap-4 mb-6">
+                    <span class="text-sm text-slate-600 dark:text-slate-400"><i class="fas fa-book mr-1"></i>${chapters.length} Chapter</span>
+                    <span class="text-sm text-slate-600 dark:text-slate-400"><i class="fas fa-eye mr-1"></i>${novel.views || 0} Views</span>
+                </div>
+                <div class="flex gap-3">
+                    ${chapters.length > 0 ? `
+                        <a href="/read?id=${chapters[0].id}" data-link
+                            class="flex-1 md:flex-none px-6 py-3 gradient-bg text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all text-center">
+                            <i class="fas fa-book-reader mr-2"></i>Mulai Baca
+                        </a>
+                    ` : ''}
+                    <button onclick="toggleBookmark('${novel.id}')" id="bookmark-btn"
+                        class="px-6 py-3 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition">
+                        <i class="fas fa-bookmark mr-2"></i>Simpan
+                    </button>
+                </div>
+            </div>
+        `;
+            document.getElementById('novel-detail').innerHTML = detailHTML;
+
+            // Synopsis
+            document.getElementById('novel-synopsis').textContent = novel.synopsis || 'Tidak ada sinopsis.';
+
+            // Chapters
+            document.getElementById('chapter-count').textContent = `${chapters.length} Chapter`;
+
+            if (chapters.length === 0) {
+                document.getElementById('chapters-list').innerHTML = '<li class="text-center py-8 text-slate-500 dark:text-slate-400">Belum ada chapter</li>';
+            } else {
+                document.getElementById('chapters-list').innerHTML = chapters.map(ch => `
+                <li>
+                    <a href="/read?id=${ch.id}" data-link
+                        class="block p-4 rounded-xl bg-slate-50 dark:bg-slate-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition group">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-sm text-indigo-600 dark:text-indigo-400 font-medium">Chapter ${ch.chapter_number}</span>
+                                <h3 class="font-semibold text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">${ch.title}</h3>
+                            </div>
+                            <i class="fas fa-chevron-right text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition"></i>
+                        </div>
+                    </a>
+                </li>
+            `).join('');
+            }
+
+            // Check bookmark status
+            checkBookmarkStatus(novel.id);
+        }
+
+        async function checkBookmarkStatus(novelId) {
+            const user = await getCurrentUser();
+            if (!user) return;
+
+            const { data } = await supabase
+                .from('bookmarks')
+                .select('*')
+                .eq('user_id', user.id)
+                .eq('novel_id', novelId)
+                .single();
+
+            if (data) {
+                const btn = document.getElementById('bookmark-btn');
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-bookmark mr-2"></i>Tersimpan';
+                    btn.classList.add('bg-red-100', 'dark:bg-red-900/30', 'text-red-600', 'dark:text-red-400');
+                }
+            }
+        }
+
+        window.toggleBookmark = async function (novelId) {
+            const user = await getCurrentUser();
+            if (!user) {
+                window.spaRouter.navigate('/login');
+                return;
+            }
+
+            const { data: existing } = await supabase
+                .from('bookmarks')
+                .select('*')
+                .eq('user_id', user.id)
+                .eq('novel_id', novelId)
+                .single();
+
+            const btn = document.getElementById('bookmark-btn');
+
+            if (existing) {
+                // Remove bookmark
+                await removeBookmark(novelId);
+                btn.innerHTML = '<i class="fas fa-bookmark mr-2"></i>Simpan';
+                btn.classList.remove('bg-red-100', 'dark:bg-red-900/30', 'text-red-600', 'dark:text-red-400');
+            } else {
+                // Add bookmark
+                await addBookmark(novelId);
+                btn.innerHTML = '<i class="fas fa-bookmark mr-2"></i>Tersimpan';
+                btn.classList.add('bg-red-100', 'dark:bg-red-900/30', 'text-red-600', 'dark:text-red-400');
+            }
+        };
+
+        function showError() {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('error-state').classList.remove('hidden');
+        }
+
+        loadNovelDetail();
     };
 </script>
