@@ -222,11 +222,7 @@ async function loginUser(input, password) {
  */
 async function getCurrentUser() {
     try {
-        // Check localStorage first
-        const storedUser = localStorage.getItem('reader_user');
-        if (!storedUser) {
-            return null;
-        }
+        // Check session directly (bypass localStorage check for robustness)
 
         // Verify session with Supabase
         const { data: { session } } = await supabase.auth.getSession();
@@ -243,14 +239,20 @@ async function getCurrentUser() {
             .single();
 
         if (!profile) {
-            localStorage.removeItem('reader_user');
-            return null;
+            // No profile found, assume Admin
+            return {
+                id: session.user.id,
+                username: session.user.email ? session.user.email.split('@')[0] : 'Admin',
+                role: 'admin',
+                created_at: session.user.created_at
+            };
         }
 
         return {
             id: profile.id,
             username: profile.username,
-            created_at: profile.created_at
+            created_at: profile.created_at,
+            role: 'reader'
         };
 
     } catch (err) {

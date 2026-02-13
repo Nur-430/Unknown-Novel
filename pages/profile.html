@@ -22,6 +22,10 @@
                         <span>Bergabung sejak <span id="profileJoinDate">-</span></span>
                     </p>
                 </div>
+                <a href="/admin/dashboard.html" id="adminDashboardBtn"
+                    class="hidden px-4 py-2 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-900/70 rounded-xl transition font-medium mr-2">
+                    <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                </a>
                 <button onclick="logout()"
                     class="px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition font-medium">
                     <i class="fas fa-sign-out-alt mr-2"></i>Keluar
@@ -173,9 +177,21 @@
             }
 
             document.getElementById('profileContent').classList.remove('hidden');
-            document.getElementById('profileUsername').textContent = user.username;
+
+            // Set Username & Role Badge
+            const usernameEl = document.getElementById('profileUsername');
+            usernameEl.innerHTML = `
+                ${user.username} 
+                ${user.role === 'admin'
+                    ? '<span class="ml-2 px-2 py-0.5 text-xs bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 rounded-lg align-middle border border-indigo-200 dark:border-indigo-800">Admin</span>'
+                    : ''}
+            `;
 
             const joinDate = new Date(user.created_at);
+            if (user.role === 'admin') {
+                const dashboardBtn = document.getElementById('adminDashboardBtn');
+                if (dashboardBtn) dashboardBtn.classList.remove('hidden');
+            }
             document.getElementById('profileJoinDate').textContent = joinDate.toLocaleDateString('id-ID', {
                 year: 'numeric',
                 month: 'long',

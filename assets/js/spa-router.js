@@ -82,6 +82,14 @@
                     this.navigate(href);
                 }
             });
+
+            // Listen for auth changes to update menu
+            if (window.supabase) {
+                window.supabase.auth.onAuthStateChange(() => {
+                    this.updateAdminMenu();
+                });
+            }
+            this.updateAdminMenu();
         },
 
         // Navigate to a new route
@@ -273,6 +281,53 @@
             if (activeLink) {
                 activeLink.classList.add('active', 'font-semibold');
                 activeLink.style.color = '#007ACC';
+            }
+        },
+
+        // Update menu based on role (Admin vs Reader)
+        async updateAdminMenu() {
+            try {
+                const navItem = document.getElementById('nav-library');
+                if (!navItem) return;
+
+                const { data: { session } } = await supabase.auth.getSession();
+
+                if (session) {
+                    // Check if profile exists (Readers have profiles, Admins might not in this logic)
+                    const { data: profile } = await supabase
+                        .from('profiles')
+                        .select('id')
+                        .eq('id', session.user.id)
+                        .single();
+
+                    if (!profile) {
+                        // Admin User
+                        navItem.href = 'admin/dashboard.html';
+                        navItem.removeAttribute('data-link');
+                        navItem.innerHTML = `
+                            <i class="fas fa-cogs text-xl"></i>
+                            <span class="text-[10px] uppercase tracking-wider">Admin</span>
+                        `;
+                    } else {
+                        // Reader User (Reset to Library)
+                        navItem.href = '/library';
+                        navItem.setAttribute('data-link', '');
+                        navItem.innerHTML = `
+                            <i class="fas fa-bookmark text-xl"></i>
+                            <span class="text-[10px] uppercase tracking-wider">Library</span>
+                         `;
+                    }
+                } else {
+                    // Guest (Reset to Library)
+                    navItem.href = '/library';
+                    navItem.setAttribute('data-link', '');
+                    navItem.innerHTML = `
+                        <i class="fas fa-bookmark text-xl"></i>
+                        <span class="text-[10px] uppercase tracking-wider">Library</span>
+                     `;
+                }
+            } catch (e) {
+                console.error("Error updating admin menu:", e);
             }
         },
 
