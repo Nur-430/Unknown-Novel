@@ -254,9 +254,19 @@
                 loadChapterList();
                 updateNavigationButtons();
                 recordReadingHistory(chapter);
+                incrementViewCount(chapter.novel_id);
             } catch (err) {
                 console.error('Error loading chapter:', err);
                 alert('Gagal memuat chapter');
+            }
+        }
+
+        async function incrementViewCount(novelId) {
+            try {
+                const { error } = await supabase.rpc('increment_page_view', { novel_id: novelId });
+                if (error) console.error('Error incrementing views:', error);
+            } catch (err) {
+                console.error('Error calling view RPC:', err);
             }
         }
 

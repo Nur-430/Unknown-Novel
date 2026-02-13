@@ -16,7 +16,7 @@
     <div id="novel-container" class="hidden">
         <!-- Novel Info Card -->
         <div class="bg-white dark:bg-slate-800 shadow-lg rounded-2xl overflow-hidden mb-6">
-            <div id="novel-detail" class="flex flex-col md:flex-row gap-6 p-6 md:p-8"></div>
+            <div id="novel-detail" class="flex flex-row gap-4 md:gap-8 p-4 md:p-8"></div>
         </div>
 
         <!-- Synopsis Card -->
@@ -83,6 +83,10 @@
             document.getElementById('novel-container').classList.remove('hidden');
 
             // Novel Detail
+            // Format: Genre | Status | Chapters | Views
+            const statusIcon = novel.status === 'Completed' ? 'fa-check-circle' : 'fa-pen-nib';
+            const statusText = novel.status || 'Ongoing';
+
             const detailHTML = `
             <div class="w-32 sm:w-48 md:w-64 flex-shrink-0">
                 <img src="${novel.cover_url || 'https://via.placeholder.com/256x384'}" 
@@ -90,39 +94,62 @@
                     class="w-full rounded-xl shadow-lg aspect-[2/3] object-cover"
                     onerror="this.src='https://via.placeholder.com/256x384?text=No+Cover'">
             </div>
-            <div class="flex-1 min-w-0 flex flex-col">
-                <h1 class="text-xl md:text-3xl font-bold text-slate-800 dark:text-white mb-1 md:mb-2 leading-tight">${novel.title}</h1>
-                <p class="text-sm md:text-base text-slate-600 dark:text-slate-400 mb-3 md:mb-4 truncate"><i class="fas fa-user mr-2"></i>${novel.author || 'Unknown'}</p>
-                
-                <div class="mb-4">
-                    ${novel.genre ? `<span class="inline-block px-2 py-0.5 md:px-3 md:py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-xs md:text-sm font-medium"><i class="fas fa-tag mr-1"></i>${novel.genre}</span>` : ''}
+            <div class="flex-1 min-w-0 flex flex-col justify-start">
+                <!-- Main Title (Inside Card) -->
+                <h1 class="text-xl md:text-3xl font-bold text-slate-800 dark:text-white mb-2 leading-tight">${novel.title}</h1>
+
+                <!-- Author (Moved Up) -->
+                <div class="mb-4 text-sm md:text-base">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium">Author: </span>
+                    <span class="text-slate-800 dark:text-white font-semibold">${novel.author || 'Unknown'}</span>
                 </div>
 
-                <div class="flex items-center gap-4 mb-4 md:mb-6 mt-auto">
-                    <span class="text-xs md:text-sm text-slate-600 dark:text-slate-400"><i class="fas fa-book mr-1"></i>${chapters.length} Ch</span>
-                    <span class="text-xs md:text-sm text-slate-600 dark:text-slate-400"><i class="fas fa-eye mr-1"></i>${novel.views || 0}</span>
+                <!-- Metadata Row (Moved Down, Stacked Vertically) -->
+                <div class="flex flex-col gap-2 text-xs md:text-sm text-slate-600 dark:text-slate-400 mb-6">
+                    ${novel.genre ? `
+                    <div class="flex items-center gap-2 hover:text-blue-600 transition cursor-pointer">
+                        <div class="w-6 text-center"><i class="fas fa-layer-group"></i></div>
+                        <span>${novel.genre}</span>
+                    </div>
+                    ` : ''}
+                    
+                    <div class="flex items-center gap-2" title="Status">
+                        <div class="w-6 text-center"><i class="fas ${statusIcon}"></i></div>
+                        <span>${statusText}</span>
+                    </div>
+
+                    <div class="flex items-center gap-2" title="Total Chapters">
+                        <div class="w-6 text-center"><i class="fas fa-file-alt"></i></div>
+                        <span>${chapters.length} Chapters</span>
+                    </div>
+
+                    <div class="flex items-center gap-2" title="Views">
+                        <div class="w-6 text-center"><i class="fas fa-eye"></i></div>
+                        <span>${novel.views || 0} Views</span>
+                    </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row gap-2 md:gap-3 mt-2">
+                <!-- Buttons -->
+                <div class="flex flex-row gap-3 mt-auto">
                     ${chapters.length > 0 ? `
                         <a href="/read?id=${chapters[0].id}" data-link
-                            class="flex-1 px-4 py-2 md:px-6 md:py-3 gradient-bg text-white rounded-lg md:rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all text-center text-sm md:text-base flex items-center justify-center">
-                            <i class="fas fa-book-reader mr-2"></i><span class="hidden sm:inline">Mulai </span>Baca
+                            class="flex-1 max-w-[160px] px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-md hover:shadow-lg transition text-center text-sm md:text-base flex items-center justify-center uppercase tracking-wide">
+                            Read
                         </a>
                     ` : ''}
                     <button onclick="toggleBookmark('${novel.id}')" id="bookmark-btn"
-                        class="px-4 py-2 md:px-6 md:py-3 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg md:rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition text-sm md:text-base flex items-center justify-center">
-                        <i class="fas fa-bookmark mr-2"></i>Simpan
+                        class="flex-1 max-w-[200px] px-4 py-2.5 bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-slate-600 hover:bg-blue-100 dark:hover:bg-slate-600 rounded-full font-bold transition text-sm md:text-base flex items-center justify-center uppercase tracking-wide">
+                        <i class="fas fa-plus mr-2"></i>Add to Library
                     </button>
                 </div>
             </div>
         `;
             const detailContainer = document.getElementById('novel-detail');
-            detailContainer.className = "flex flex-row gap-4 md:gap-8 p-4 md:p-8"; // Enforce row layout
+            detailContainer.className = "flex flex-row gap-4 md:gap-8 p-4 md:p-8";
             detailContainer.innerHTML = detailHTML;
 
             // Synopsis
-            document.getElementById('novel-synopsis').textContent = novel.synopsis || 'Tidak ada sinopsis.';
+            document.getElementById('novel-synopsis').textContent = novel.description || 'Tidak ada sinopsis.';
 
             // Chapters
             document.getElementById('chapter-count').textContent = `${chapters.length} Chapter`;
