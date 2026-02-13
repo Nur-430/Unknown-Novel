@@ -148,6 +148,16 @@
             // Update active nav link
             this.updateActiveNav(pathname);
 
+            // Toggle Bottom Nav Visibility (Hide on Read page)
+            const bottomNav = document.getElementById('bottom-nav');
+            if (bottomNav) {
+                if (pathname === '/read') {
+                    bottomNav.classList.add('hidden');
+                } else {
+                    bottomNav.classList.remove('hidden');
+                }
+            }
+
             // Determine navigation direction
             const direction = this.getDirection(this.currentPage, pathname);
 
