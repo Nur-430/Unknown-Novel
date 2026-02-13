@@ -160,12 +160,21 @@
     <header
         class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-100 dark:border-slate-700">
         <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
-            <a href="/" data-link
-                class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent flex items-center gap-2">
-                <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center">
-                    <i class="fas fa-book-open text-white text-lg"></i>
+            <a href="/" data-link class="flex items-center gap-3 group">
+                <img src="assets/img/logo.png" alt="Unknown Novel"
+                    class="h-10 w-auto object-contain transition-transform group-hover:scale-105"
+                    onerror="this.onerror=null; this.src='https://via.placeholder.com/50x50?text=Logo';">
+                <div class="flex flex-col justify-center select-none">
+                    <span
+                        class="text-2xl font-black italic tracking-wider bg-gradient-to-b from-cyan-300 to-blue-600 bg-clip-text text-transparent leading-none"
+                        style="-webkit-text-stroke: 1px #0f172a; filter: drop-shadow(0px 2px 0px rgba(15, 23, 42, 0.2));">
+                        UNKNOWN
+                    </span>
+                    <span
+                        class="text-[10px] font-bold tracking-[0.3em] text-cyan-600 uppercase text-right mr-0.5 leading-none">
+                        NOVEL
+                    </span>
                 </div>
-                <span class="hidden sm:inline">Unknown Novel</span>
             </a>
 
             <div class="flex items-center gap-2">
