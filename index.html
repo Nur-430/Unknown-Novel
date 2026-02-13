@@ -19,6 +19,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/theme.css">
     <style>
+        html {
+            overflow-y: scroll;
+            /* Forces vertical scrollbar to prevent layout shift */
+            overflow-x: hidden;
+            /* Prevents horizontal scrollbar during animations */
+        }
+
         * {
             font-family: 'Inter', sans-serif;
         }
@@ -125,7 +132,7 @@
     </style>
 </head>
 
-<body class="bg-slate-50 dark:bg-slate-900 min-h-screen flex flex-col transition-colors">
+<body class="bg-slate-50 dark:bg-slate-900 min-h-screen flex flex-col transition-colors overflow-x-hidden">
 
     <!-- Search Modal -->
     <div id="searchModal"
@@ -182,7 +189,7 @@
     </header>
 
     <!-- SPA Content Container -->
-    <div id="app-content" class="flex-1 flex flex-col">
+    <div id="app-content" class="flex-1 flex flex-col min-h-screen">
         <!-- Page content will be loaded here dynamically -->
         <div class="flex-1 flex items-center justify-center">
             <div class="text-center">
