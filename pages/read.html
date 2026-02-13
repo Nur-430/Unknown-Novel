@@ -367,7 +367,13 @@
 
         window.updateFontFamily = function (font) {
             const content = document.getElementById('reading-content');
-            content.className = content.className.replace(/font-\w+/, font);
+            // Remove known font classes first to ensure clean state
+            content.classList.remove('font-inter', 'font-merriweather', 'font-lora', 'font-roboto', 'font-opensans');
+
+            // Add the selected font
+            if (font) {
+                content.classList.add(font);
+            }
             localStorage.setItem('readerFontFamily', font);
         };
 
